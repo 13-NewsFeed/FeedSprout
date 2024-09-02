@@ -19,10 +19,21 @@ public class CommentService {
     // 댓글 생성 요청을 받아 저장
     @Transactional
     public CommentSaveResponseDto saveComment(Long postId, CommentSaveRequestDto commentSaveRequestDto) {
-        Comment newComment = new Comment(commentSaveRequestDto.getContents(), postId, commentSaveRequestDto.getUserId());
+        Comment newComment = new Comment(
+                commentSaveRequestDto.getContents(),
+                postId,
+                commentSaveRequestDto.getUserId()
+        );
         Comment savedComment = commentRepository.save(newComment);
 
-        return new CommentSaveResponseDto(savedComment.getId(), savedComment.getContents(),savedComment.getPostId(),savedComment.getUserId());
+        return new CommentSaveResponseDto(
+                savedComment.getId(),
+                savedComment.getContents(),
+                savedComment.getPostId(),
+                savedComment.getUserId(),
+                savedComment.getCreatedAt(),
+                savedComment.getModifiedAt()
+        );
     }
 
     // 특정 게시글의 댓글 전부 조회
