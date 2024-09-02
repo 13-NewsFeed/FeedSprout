@@ -23,4 +23,9 @@ public class Comment extends Timestamped{
         this.postId = postId;
         this.userId = userId;
     }
+
+    public void update(String contents){
+        this.contents = contents;
+    }
+
 }

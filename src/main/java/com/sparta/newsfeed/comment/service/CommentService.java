@@ -1,8 +1,6 @@
 package com.sparta.newsfeed.comment.service;
 
-import com.sparta.newsfeed.comment.dto.CommentGetAllResponseDto;
-import com.sparta.newsfeed.comment.dto.CommentSaveRequestDto;
-import com.sparta.newsfeed.comment.dto.CommentSaveResponseDto;
+import com.sparta.newsfeed.comment.dto.*;
 import com.sparta.newsfeed.comment.entity.Comment;
 import com.sparta.newsfeed.comment.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +25,7 @@ public class CommentService {
         return new CommentSaveResponseDto(savedComment.getId(), savedComment.getContents(),savedComment.getPostId(),savedComment.getUserId());
     }
 
+    // 특정 게시글의 댓글 전부 조회
     public List<CommentGetAllResponseDto> getAllComments(Long postId) {
         List<Comment> commentList = commentRepository.findByPostId(postId);
 
@@ -38,9 +37,20 @@ public class CommentService {
             dtoList.add(dto);
         }
         return dtoList;
-
-
     }
+
+    // 특정 댓글 내용 수정
+    @Transactional
+    public CommentUpdateResponseDto updateComment(Long commentId, CommentUpdateRequestDto commentUpdateRequestDto) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new RuntimeException("Comment not found")
+        );
+        comment.update(commentUpdateRequestDto.getContents());
+
+        return new CommentUpdateResponseDto(comment.getContents());
+    }
+
+
 
 
 

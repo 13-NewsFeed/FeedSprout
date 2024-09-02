@@ -1,8 +1,6 @@
 package com.sparta.newsfeed.comment.controller;
 
-import com.sparta.newsfeed.comment.dto.CommentGetAllResponseDto;
-import com.sparta.newsfeed.comment.dto.CommentSaveRequestDto;
-import com.sparta.newsfeed.comment.dto.CommentSaveResponseDto;
+import com.sparta.newsfeed.comment.dto.*;
 import com.sparta.newsfeed.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +25,14 @@ public class CommentController {
     @GetMapping("/posts/{post-id}/comments")
     public ResponseEntity<List<CommentGetAllResponseDto>> getAllComments(@PathVariable Long postId) {
         return ResponseEntity.ok(commentService.getAllComments(postId));
+    }
+
+    // 댓글 수정
+    @PutMapping("/posts/comments/{comment-id}")
+    public ResponseEntity<CommentUpdateResponseDto> updateComment(
+            @PathVariable Long commentId, @RequestBody CommentUpdateRequestDto commentUpdateRequestDto
+    ){
+        return ResponseEntity.ok(commentService.updateComment(commentId, commentUpdateRequestDto));
     }
 
 
