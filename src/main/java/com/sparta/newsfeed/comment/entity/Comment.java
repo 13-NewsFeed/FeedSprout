@@ -15,4 +15,12 @@ public class Comment extends Timestamped{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String contents;
+    private Long postId;
+    private Long userId;
+
+    public Comment(String contents, Long postId, Long userId) {
+        this.contents = contents;
+        this.postId = postId;
+        this.userId = userId;
+    }
 }
