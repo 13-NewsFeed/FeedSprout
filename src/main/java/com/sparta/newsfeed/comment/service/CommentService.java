@@ -63,7 +63,14 @@ public class CommentService {
         );
         comment.update(commentUpdateRequestDto.getContents());
 
-        return new CommentUpdateResponseDto(comment.getContents());
+        return new CommentUpdateResponseDto(
+                comment.getId(),
+                comment.getContents(),
+                comment.getPostId(),
+                comment.getUserId(),
+                comment.getCreatedAt(),
+                comment.getModifiedAt()
+                );
     }
 
     // 특정 댓글 삭제
