@@ -50,6 +50,12 @@ public class CommentService {
         return new CommentUpdateResponseDto(comment.getContents());
     }
 
+    // 특정 댓글 삭제
+    @Transactional
+    public void deleteComment(Long commentId) {
+        commentRepository.deleteById(commentId);
+    }
+
 
 
 
