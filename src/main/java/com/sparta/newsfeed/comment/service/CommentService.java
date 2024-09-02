@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.comment.service;
 
+import com.sparta.newsfeed.comment.dto.CommentGetAllResponseDto;
 import com.sparta.newsfeed.comment.dto.CommentSaveRequestDto;
 import com.sparta.newsfeed.comment.dto.CommentSaveResponseDto;
 import com.sparta.newsfeed.comment.entity.Comment;
@@ -8,8 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CommentService {
     private final CommentRepository commentRepository;
 
@@ -20,6 +25,20 @@ public class CommentService {
         Comment savedComment = commentRepository.save(newComment);
 
         return new CommentSaveResponseDto(savedComment.getId(), savedComment.getContents(),savedComment.getPostId(),savedComment.getUserId());
+    }
+
+    public List<CommentGetAllResponseDto> getAllComments(Long postId) {
+        List<Comment> commentList = commentRepository.findByPostId(postId);
+
+        List<CommentGetAllResponseDto> dtoList = new ArrayList<>();
+        for (Comment comment : commentList) {
+            CommentGetAllResponseDto dto = new CommentGetAllResponseDto(
+                    comment.getId(), comment.getContents(), comment.getPostId(), comment.getUserId()
+            );
+            dtoList.add(dto);
+        }
+        return dtoList;
+
 
     }
 
