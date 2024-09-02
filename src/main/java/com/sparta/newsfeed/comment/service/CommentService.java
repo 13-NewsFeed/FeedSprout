@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
     private final CommentRepository commentRepository;
 
+    // 댓글 생성 요청을 받아 저장
     @Transactional
     public CommentSaveResponseDto saveComment(Long postId, CommentSaveRequestDto commentSaveRequestDto) {
         Comment newComment = new Comment(commentSaveRequestDto.getContents(), postId, commentSaveRequestDto.getUserId());

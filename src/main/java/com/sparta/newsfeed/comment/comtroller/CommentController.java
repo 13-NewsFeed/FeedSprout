@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
     private final CommentService commentService;
 
+    // 댓글 생성
     @PostMapping("/posts/{post-id}/comments")
     public ResponseEntity<CommentSaveResponseDto> addComment(
             @PathVariable Long postId, @RequestBody CommentSaveRequestDto commentSaveRequestDto
