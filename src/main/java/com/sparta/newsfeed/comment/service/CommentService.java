@@ -43,7 +43,12 @@ public class CommentService {
         List<CommentGetAllResponseDto> dtoList = new ArrayList<>();
         for (Comment comment : commentList) {
             CommentGetAllResponseDto dto = new CommentGetAllResponseDto(
-                    comment.getId(), comment.getContents(), comment.getPostId(), comment.getUserId()
+                    comment.getId(),
+                    comment.getContents(),
+                    comment.getPostId(),
+                    comment.getUserId(),
+                    comment.getCreatedAt(),
+                    comment.getModifiedAt()
             );
             dtoList.add(dto);
         }
