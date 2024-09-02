@@ -1,4 +1,4 @@
-package com.sparta.newsfeed.comment.comtroller;
+package com.sparta.newsfeed.comment.controller;
 
 import com.sparta.newsfeed.comment.dto.CommentGetAllResponseDto;
 import com.sparta.newsfeed.comment.dto.CommentSaveRequestDto;
