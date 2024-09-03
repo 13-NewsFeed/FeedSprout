@@ -43,24 +43,28 @@ public class CommentService {
         return new CommentSaveResponseDto(
                 savedComment.getId(),
                 savedComment.getContents(),
-                post.getId(),
-                user.getId(),
+                postId,
+                authUser.getId(),
                 savedComment.getCreatedAt(),
                 savedComment.getModifiedAt()
         );
     }
 
     // 특정 게시글의 댓글 전부 조회
-    public List<CommentGetAllResponseDto> getAllComments(Long postId) {
+    public List<CommentGetAllResponseDto> getAllComments(Long postId, AuthUser authUser) {
         List<Comment> commentList = commentRepository.findByPostId(postId);
+
+        User user = userRepository.findById(authUser.getId()).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
 
         List<CommentGetAllResponseDto> dtoList = new ArrayList<>();
         for (Comment comment : commentList) {
             CommentGetAllResponseDto dto = new CommentGetAllResponseDto(
                     comment.getId(),
                     comment.getContents(),
-                    comment.getPostId(),
-                    comment.getUserId(),
+                    postId,
+                    authUser.getId(),
                     comment.getCreatedAt(),
                     comment.getModifiedAt()
             );
