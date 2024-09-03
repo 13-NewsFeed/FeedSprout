@@ -1,8 +1,9 @@
 package com.sparta.newsfeed.comment.entity;
 
-import com.sparta.newsfeed.post.entity.Post;
-import com.sparta.newsfeed.user.entity.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,19 +15,13 @@ public class Comment extends Timestamped{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String contents;
+    private Long postId;
+    private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    public Comment(String contents, Post post, User user) {
+    public Comment(String contents, Long postId, Long userId) {
         this.contents = contents;
-        this.post = post;
-        this.user = user;
+        this.postId = postId;
+        this.userId = userId;
     }
 
     public void update(String contents){

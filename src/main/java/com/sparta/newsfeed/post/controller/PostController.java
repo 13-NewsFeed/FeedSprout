@@ -28,6 +28,8 @@ public class PostController {
 //    @GetMapping("/posts/edited-date")      // 게시글 조회 (수정일자)
 //
 //    @GetMapping("/posts/likes")      // 게시글 조회 (좋아요) 많은순
+
+//    @GetMapping("/newsfeed/{userId}")    // 자기 자신의 게시글만 보이게
 //
 //    @GetMapping("/profiles/{id}/follows/posts")      // 게시글 조회 (팔로우)
 //
