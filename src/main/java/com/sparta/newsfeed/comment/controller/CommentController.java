@@ -12,6 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
+/*
 
     // 댓글 생성
     @PostMapping("/posts/{post-id}/comments")
@@ -41,6 +42,7 @@ public class CommentController {
         commentService.deleteComment(commentId);
     }
 
+*/
 
 
 
