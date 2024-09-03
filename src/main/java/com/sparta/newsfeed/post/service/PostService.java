@@ -8,7 +8,12 @@ import com.sparta.newsfeed.post.entity.User;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.post.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -35,7 +40,7 @@ public class PostService {
 
     }
 
-    public PostResponseDto getTodo(Long postId) {
+    public PostResponseDto getpost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         PostResponseDto responseDto = new PostResponseDto(
                 post.getId(),
@@ -47,6 +52,19 @@ public class PostService {
         );
         return responseDto;
     }
+
+
+    public List<PostResponseDto> getPostsByTime(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo-1, pageSize, Sort.by("modifiedAt").descending());
+        return postRepository.findAll(pageable).stream().map(PostResponseDto::new).toList();
+    }
+
+    public List<PostResponseDto> getPostsByLikes(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo-1, pageSize, Sort.by("likes").descending());
+        return postRepository.findAll(pageable).stream().map(PostResponseDto::new).toList();
+    }
+
+
 
     public PostResponseDto update(Long postId, PostRequestDto dto) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
@@ -79,4 +97,7 @@ public class PostService {
         );
 
     }
+
+
+
 }
