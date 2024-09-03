@@ -1,5 +1,8 @@
 package com.sparta.newsfeed.like.entity;
 
+import com.sparta.newsfeed.comment.entity.Comment;
+import com.sparta.newsfeed.post.entity.Post;
+import com.sparta.newsfeed.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

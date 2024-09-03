@@ -8,6 +8,7 @@ import com.sparta.newsfeed.post.entity.User;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.post.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -63,13 +64,13 @@ public class PostService {
     }
 
     public List<PostResponseDto> getPostsByLikes(Long userId, int pageNo, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNo-1, pageSize, Sort.by("likes").descending());
-        return postRepository.findByUserId(userId, pageable)
-                .stream()
+        Pageable pageable = PageRequest.of(pageNo-1, pageSize);
+        Page<Post> postPage = postRepository.findByUserIdOrderByLikesCountDesc(userId, pageable);
+        // Page<Post> 결과를 PostResponseDto 리스트로 변환
+        return postPage.stream()
                 .map(PostResponseDto::new)
                 .toList();
     }
-
 
 
     public PostResponseDto update(Long postId, PostRequestDto dto) {
