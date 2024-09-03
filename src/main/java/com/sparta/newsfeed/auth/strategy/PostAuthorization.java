@@ -14,9 +14,12 @@ public class PostAuthorization implements AuthorizationStrategy {
         this.postRepository = postRepository;
     }
 
+    // 해당 Claims에서 사용자 정보를 가져오고, 입력받은 Id를 이용하여 사용자를 가져와서 이 둘이 일치하는지 비교
     @Override
     public boolean isAuthorized(Claims info, Long postId) throws ServletException, IOException {
         User user = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException()).getUser();
         return user.getEmail().equals(info.getSubject());
     }
 }
+
+// 필터에 요구사항이 많이 들어가서는 안된다.

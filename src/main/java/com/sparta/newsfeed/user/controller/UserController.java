@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -21,7 +21,7 @@ public class UserController {
 
     // 프로필 생성
     @PostMapping("/profiles/")
-    public ResponseEntity<UserResponseDto> createProfile(@RequestBody UserRequestDto requestDto) {
+    public ResponseEntity<?> createProfile(@RequestBody UserRequestDto requestDto) {
         try{
             // 사용자 서비스 호출 생성
             UserResponseDto userResponseDto = userService.createProfile(requestDto);
@@ -32,7 +32,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch(Exception ex){
             // 서버 오류 : 500 코드로 에러 메세지 반환 (문자열로 반환)
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("is server error");
         }
     }
 

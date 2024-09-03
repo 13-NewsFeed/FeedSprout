@@ -1,11 +1,16 @@
 package com.sparta.newsfeed.user.entity;
 
 
+import com.sparta.newsfeed.comment.entity.Comment;
+import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -33,8 +38,15 @@ public class User extends TimeStamp {
 
         this.email = requestDto.getEmail();
         this.password = requestDto.getPassword();
+        this.nickname = requestDto.getNickname();
 
     }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Comment> comments = new ArrayList<>();
 
 
 }

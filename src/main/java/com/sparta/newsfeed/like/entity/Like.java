@@ -1,5 +1,6 @@
-package com.sparta.newsfeed.comment.entity;
+package com.sparta.newsfeed.like.entity;
 
+import com.sparta.newsfeed.comment.entity.Comment;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.user.entity.User;
 import jakarta.persistence.*;
@@ -9,20 +10,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Comment extends Timestamped{
+@Table(name = "likey")
+public class Like {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String contents;
-
-    public Comment(String contents, Long postId, Long userId) {
-        this.contents = contents;
-    }
-
-    public void update(String contents){
-        this.contents = contents;
-    }
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -32,4 +25,7 @@ public class Comment extends Timestamped{
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 }
