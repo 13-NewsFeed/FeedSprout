@@ -2,7 +2,6 @@ package com.sparta.newsfeed.user.controller;
 
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
-import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
