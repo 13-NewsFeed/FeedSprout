@@ -25,7 +25,7 @@ public class CommentController {
     // 댓글 조회(전체)
     @GetMapping("/posts/{post-id}/comments")
     public ResponseEntity<List<CommentGetAllResponseDto>> getAllComments(@PathVariable(name = "post-id") Long postId, AuthUser authUser) {
-        return ResponseEntity.ok(commentService.getAllComments(postId));
+        return ResponseEntity.ok(commentService.getAllComments(postId, authUser));
     }
 
     // 댓글 수정
