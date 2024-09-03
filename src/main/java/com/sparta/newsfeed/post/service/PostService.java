@@ -54,14 +54,20 @@ public class PostService {
     }
 
 
-    public List<PostResponseDto> getPostsByTime(int pageNo, int pageSize) {
+    public List<PostResponseDto> getPostsByTime(Long userId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo-1, pageSize, Sort.by("modifiedAt").descending());
-        return postRepository.findAll(pageable).stream().map(PostResponseDto::new).toList();
+        return postRepository.findByUserId(userId, pageable)
+                .stream()
+                .map(PostResponseDto::new)
+                .toList();
     }
 
-    public List<PostResponseDto> getPostsByLikes(int pageNo, int pageSize) {
+    public List<PostResponseDto> getPostsByLikes(Long userId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo-1, pageSize, Sort.by("likes").descending());
-        return postRepository.findAll(pageable).stream().map(PostResponseDto::new).toList();
+        return postRepository.findByUserId(userId, pageable)
+                .stream()
+                .map(PostResponseDto::new)
+                .toList();
     }
 
 

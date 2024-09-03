@@ -27,21 +27,23 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/posts/edited-date")       // 게시글 조회 (수정일자 내림차순)
+    @GetMapping("/posts/edited-date/{userId}")       // 게시글 조회 (수정일자 내림차순)
     public ResponseEntity<List<PostResponseDto>> getPostsByTime(
+            @PathVariable Long userId,
             @RequestParam(defaultValue = "1", required = false) int pageNo,
             @RequestParam(defaultValue = "10", required = false) int pageSize
     ) {
-        List<PostResponseDto> response = postService.getPostsByTime(pageNo, pageSize);
+        List<PostResponseDto> response = postService.getPostsByTime(userId, pageNo, pageSize);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/posts/likes")       // 게시글 조회 (좋아요 많은순)
+    @GetMapping("/posts/likes/{userId}")       // 게시글 조회 (좋아요 많은순 내림차순)
     public ResponseEntity<List<PostResponseDto>> getPostsByLikes(
+            @PathVariable Long userId,
             @RequestParam(defaultValue = "1", required = false) int pageNo,
             @RequestParam(defaultValue = "10", required = false) int pageSize
     ) {
-        List<PostResponseDto> response = postService.getPostsByLikes(pageNo, pageSize);
+        List<PostResponseDto> response = postService.getPostsByLikes(userId, pageNo, pageSize);
         return ResponseEntity.ok(response);
     }
 
