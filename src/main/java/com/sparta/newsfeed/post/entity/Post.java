@@ -27,14 +27,8 @@ public class Post extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> likes;
-
-    // 0개
-    // 재현 조아요 -> 1개
-    // 태준 조아요 -> 2개
-    // 태준 해제 -> 1개
-
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.REMOVE})
+    private List<Like> likes = new ArrayList<>();
 
 
     public static Post createPost(PostRequestDto dto, User user) {

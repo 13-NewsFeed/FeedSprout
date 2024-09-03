@@ -1,7 +1,6 @@
 package com.sparta.newsfeed.post.service;
 
 
-import com.sparta.newsfeed.like.entity.Like;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
@@ -9,9 +8,13 @@ import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
+import java.util.List;
 
 
 @Service
@@ -21,12 +24,11 @@ public class PostService {
     @Autowired
     private UserRepository userRepository;
 
-    public PostResponseDto createPost(Long userId, PostRequestDto dto) {
+    public PostResponseDto create(Long userId, PostRequestDto dto) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalArgumentException("대상 유저가 없습니다."));
         Post post = Post.createPost(dto, user);
         Post savedPost = postRepository.save(post);
-
 
         return new PostResponseDto(
                 savedPost.getId(),
@@ -39,7 +41,7 @@ public class PostService {
 
     }
 
-    public PostResponseDto getPost(Long postId) {
+    public PostResponseDto getpost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         PostResponseDto responseDto = new PostResponseDto(
                 post.getId(),
@@ -53,7 +55,25 @@ public class PostService {
     }
 
 
-    public PostResponseDto updatePost(Long postId, PostRequestDto dto) {
+    public List<PostResponseDto> getPostsByTime(Long userId, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo-1, pageSize, Sort.by("modifiedAt").descending());
+        return postRepository.findByUserId(userId, pageable)
+                .stream()
+                .map(PostResponseDto::new)
+                .toList();
+    }
+
+    public List<PostResponseDto> getPostsByLikes(Long userId, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo-1, pageSize);
+        Page<Post> postPage = postRepository.findByUserIdOrderByLikesCountDesc(userId, pageable);
+        // Page<Post> 결과를 PostResponseDto 리스트로 변환
+        return postPage.stream()
+                .map(PostResponseDto::new)
+                .toList();
+    }
+
+
+    public PostResponseDto update(Long postId, PostRequestDto dto) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         post.update(
                 dto.getTitle(),
@@ -71,7 +91,7 @@ public class PostService {
 
     }
 
-    public PostResponseDto deletePost(Long postId) {
+    public PostResponseDto delete(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         postRepository.delete(post);
         return new PostResponseDto(
@@ -84,4 +104,7 @@ public class PostService {
         );
 
     }
+
+
+
 }

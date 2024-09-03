@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.post.dto;
 
 
+import com.sparta.newsfeed.post.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,5 +29,13 @@ public class PostResponseDto {
         this.contents = content;
     }
 
+    public PostResponseDto(Post post) {
+        this.id = post.getId();
+        this.userId = post.getUser().getUserId();
+        this.title = post.getTitle();
+        this.contents = post.getContents();
+        this.createdAt = post.getCreatedAt();
+        this.modifiedAt = post.getModifiedAt();
+    }
 }
 
