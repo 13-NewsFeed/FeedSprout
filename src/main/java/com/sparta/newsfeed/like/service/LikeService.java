@@ -1,8 +1,14 @@
 package com.sparta.newsfeed.like.service;
 
+import com.sparta.newsfeed.auth.util.JwtUtil;
+import com.sparta.newsfeed.comment.entity.Comment;
+import com.sparta.newsfeed.comment.repository.CommentRepository;
 import com.sparta.newsfeed.like.dto.StatusResult;
 import com.sparta.newsfeed.like.entity.Like;
 import com.sparta.newsfeed.like.repository.LikeRepository;
+import com.sparta.newsfeed.post.entity.Post;
+import com.sparta.newsfeed.post.repository.PostRepository;
+import com.sparta.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

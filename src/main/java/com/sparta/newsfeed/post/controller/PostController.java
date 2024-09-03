@@ -47,11 +47,7 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-//    @GetMapping("/profiles/{id}/follows/posts")      // 게시글 조회 (팔로우)
 
-//    @PostMapping("/posts/{id}/likes")      // 게시글 좋아요 등록
-
-//    @DeleteMapping("/posts/{id}/likes")       // 게시글 좋아요 삭제
 
 
     @PutMapping("/posts/{postId}")      // 게시글 수정
