@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.comment.controller;
 
+import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.comment.dto.*;
 import com.sparta.newsfeed.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -12,14 +13,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
-/*
 
     // 댓글 생성
     @PostMapping("/posts/{post-id}/comments")
     public ResponseEntity<CommentSaveResponseDto> addComment(
-            @PathVariable(name = "post-id") Long postId, @RequestBody CommentSaveRequestDto commentSaveRequestDto
+            @PathVariable(name = "post-id") Long postId, AuthUser authUser, @RequestBody CommentSaveRequestDto commentSaveRequestDto
     ) {
-        return ResponseEntity.ok(commentService.saveComment(postId, commentSaveRequestDto));
+        return ResponseEntity.ok(commentService.saveComment(postId, authUser, commentSaveRequestDto));
     }
 
     // 댓글 조회(전체)
@@ -42,7 +42,6 @@ public class CommentController {
         commentService.deleteComment(commentId);
     }
 
-*/
 
 
 
