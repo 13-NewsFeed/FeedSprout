@@ -14,14 +14,14 @@ public class PostController {
     PostService postService;
 
     @PostMapping("/posts/{userId}")      // userId 게시글 작성
-    public ResponseEntity<PostResponseDto> create(@PathVariable Long userId, @RequestBody PostRequestDto dto) {
-        PostResponseDto response = postService.create(userId, dto);
+    public ResponseEntity<PostResponseDto> createPost(@PathVariable Long userId, @RequestBody PostRequestDto dto) {
+        PostResponseDto response = postService.createPost(userId, dto);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/posts/{postId}")       // 게시글 단건 조회
-    public ResponseEntity<PostResponseDto> getTodo(@PathVariable Long postId) {
-        PostResponseDto response = postService.getTodo(postId);
+    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long postId) {
+        PostResponseDto response = postService.getPost(postId);
         return ResponseEntity.ok(response);
     }
 
@@ -37,14 +37,14 @@ public class PostController {
 
 
     @PutMapping("/posts/{postId}")      // 게시글 수정
-    public ResponseEntity<PostResponseDto> update(@PathVariable Long postId, @RequestBody PostRequestDto dto) {
-        PostResponseDto response = postService.update(postId, dto);
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long postId, @RequestBody PostRequestDto dto) {
+        PostResponseDto response = postService.updatePost(postId, dto);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/posts/{postId}")       // 게시글 삭제
-    public ResponseEntity<PostResponseDto> delete(@PathVariable Long postId) {
-        PostResponseDto responseDto = postService.delete(postId);
+    public ResponseEntity<PostResponseDto> deletePost(@PathVariable Long postId) {
+        PostResponseDto responseDto = postService.deletePost(postId);
         return ResponseEntity.ok(responseDto);
     }
 

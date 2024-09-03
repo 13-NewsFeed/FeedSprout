@@ -10,6 +10,8 @@ import com.sparta.newsfeed.post.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+
 
 @Service
 public class PostService {
@@ -18,11 +20,12 @@ public class PostService {
     @Autowired
     private UserRepository userRepository;
 
-    public PostResponseDto create(Long userId, PostRequestDto dto) {
+    public PostResponseDto createPost(Long userId, PostRequestDto dto) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalArgumentException("대상 유저가 없습니다."));
         Post post = Post.createPost(dto, user);
         Post savedPost = postRepository.save(post);
+
 
         return new PostResponseDto(
                 savedPost.getId(),
@@ -35,7 +38,7 @@ public class PostService {
 
     }
 
-    public PostResponseDto getTodo(Long postId) {
+    public PostResponseDto getPost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         PostResponseDto responseDto = new PostResponseDto(
                 post.getId(),
@@ -48,7 +51,7 @@ public class PostService {
         return responseDto;
     }
 
-    public PostResponseDto update(Long postId, PostRequestDto dto) {
+    public PostResponseDto updatePost(Long postId, PostRequestDto dto) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         post.update(
                 dto.getTitle(),
@@ -66,7 +69,7 @@ public class PostService {
 
     }
 
-    public PostResponseDto delete(Long postId) {
+    public PostResponseDto deletePost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         postRepository.delete(post);
         return new PostResponseDto(
