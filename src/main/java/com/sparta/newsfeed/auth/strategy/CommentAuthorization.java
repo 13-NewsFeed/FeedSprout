@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.auth.strategy;
 
 import com.sparta.newsfeed.comment.repository.CommentRepository;
+import com.sparta.newsfeed.user.entity.User;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.ServletException;
 
