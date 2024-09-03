@@ -2,7 +2,10 @@ package com.sparta.newsfeed.user.service;
 
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
+import com.sparta.newsfeed.user.entity.Follow;
+import com.sparta.newsfeed.user.entity.FollowState;
 import com.sparta.newsfeed.user.entity.User;
+import com.sparta.newsfeed.user.repository.FollowRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -66,4 +69,6 @@ public class UserService {
         return new UserResponseDto(updateUser);
 
     }
+
+
 }

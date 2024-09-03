@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.post.entity;
 
 
+import com.sparta.newsfeed.like.entity.Like;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.user.entity.User;
 import jakarta.persistence.*;
@@ -25,6 +26,15 @@ public class Post extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes;
+
+    // 0개
+    // 재현 조아요 -> 1개
+    // 태준 조아요 -> 2개
+    // 태준 해제 -> 1개
+
 
 
     public static Post createPost(PostRequestDto dto, User user) {

@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.post.service;
 
 
+import com.sparta.newsfeed.like.entity.Like;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
@@ -50,6 +51,7 @@ public class PostService {
         );
         return responseDto;
     }
+
 
     public PostResponseDto updatePost(Long postId, PostRequestDto dto) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
