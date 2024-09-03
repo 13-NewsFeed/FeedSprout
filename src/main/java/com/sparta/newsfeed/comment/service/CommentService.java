@@ -75,17 +75,17 @@ public class CommentService {
 
     // 특정 댓글 내용 수정
     @Transactional
-    public CommentUpdateResponseDto updateComment(Long commentId, CommentUpdateRequestDto commentUpdateRequestDto) {
+    public CommentUpdateResponseDto updateComment(Long commentId, AuthUser authUser,CommentUpdateRequestDto commentUpdateRequestDto) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new RuntimeException("Comment not found")
         );
         comment.update(commentUpdateRequestDto.getContents());
 
         return new CommentUpdateResponseDto(
-                comment.getId(),
+                commentId,
                 comment.getContents(),
-                comment.getPostId(),
-                comment.getUserId(),
+                comment.getPost(),
+                authUser.getId(),
                 comment.getCreatedAt(),
                 comment.getModifiedAt()
                 );

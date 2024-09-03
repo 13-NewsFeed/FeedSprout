@@ -31,9 +31,9 @@ public class CommentController {
     // 댓글 수정
     @PutMapping("/posts/comments/{comment-id}")
     public ResponseEntity<CommentUpdateResponseDto> updateComment(
-            @PathVariable(name = "comment-id") Long commentId, @RequestBody CommentUpdateRequestDto commentUpdateRequestDto
+            @PathVariable(name = "comment-id") Long commentId, AuthUser authUser,@RequestBody CommentUpdateRequestDto commentUpdateRequestDto
     ){
-        return ResponseEntity.ok(commentService.updateComment(commentId, commentUpdateRequestDto));
+        return ResponseEntity.ok(commentService.updateComment(commentId, authUser, commentUpdateRequestDto));
     }
 
     // 댓글 삭제
