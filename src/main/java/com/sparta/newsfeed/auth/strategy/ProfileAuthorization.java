@@ -14,6 +14,7 @@ public class ProfileAuthorization implements AuthorizationStrategy {
         this.userRepository = userRepository;
     }
 
+    // 해당 Claims에서 사용자 정보를 가져오고, 입력받은 Id를 이용하여 사용자를 가져와서 이 둘이 일치하는지 비교
     @Override
     public boolean isAuthorized(Claims info, Long userId) throws ServletException, IOException {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Profile not found"));

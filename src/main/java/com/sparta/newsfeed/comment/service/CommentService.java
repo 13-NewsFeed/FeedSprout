@@ -14,23 +14,19 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommentService {
-    private final CommentRepository commentRepository;
+    /*private final CommentRepository commentRepository;
 
     // 댓글 생성 요청을 받아 저장
     @Transactional
     public CommentSaveResponseDto saveComment(Long postId, CommentSaveRequestDto commentSaveRequestDto) {
         Comment newComment = new Comment(
-                commentSaveRequestDto.getContents(),
-                postId,
-                commentSaveRequestDto.getUserId()
+                commentSaveRequestDto.getContents()
         );
         Comment savedComment = commentRepository.save(newComment);
 
         return new CommentSaveResponseDto(
                 savedComment.getId(),
                 savedComment.getContents(),
-                savedComment.getPostId(),
-                savedComment.getUserId(),
                 savedComment.getCreatedAt(),
                 savedComment.getModifiedAt()
         );
@@ -80,7 +76,7 @@ public class CommentService {
     }
 
 
-
+*/
 
 
 

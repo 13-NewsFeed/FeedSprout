@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.auth.util;
 
+import com.sparta.newsfeed.user.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -44,11 +45,13 @@ public class JwtUtil {
 
 
     // Token 생성 메서드
-    public String generateAccessToken(String email) {
+    public String generateAccessToken(User user) {
         Long now = System.currentTimeMillis();
+        String email = user.getEmail();
 
         return Jwts.builder()
                 .setSubject(String.valueOf(email)) // 사용자 식별자값(ID)
+                .claim(String.valueOf(user.getId()), "userId")
                 .setExpiration(new Date(now + ACCESS_TOKEN_TIME)) // 만료 시간
                 .setIssuedAt(new Date(now)) // 생성 시간
                 .signWith(key, signatureAlgorithm) // 암호화 알고리즘
@@ -58,13 +61,14 @@ public class JwtUtil {
 
 
 
-    public String generateRefreshToken(String email) {
+    public String generateRefreshToken(User user) {
         Long now = System.currentTimeMillis();
-
-        String userEmail = email;
+        Long userId = user.getId();
+        String email = user.getEmail();
 
         return Jwts.builder()
-                .setSubject(String.valueOf(email)) // 사용자 식별자값(ID)
+                .setSubject(String.valueOf(userId)) // 사용자 식별자값(ID)
+                .claim("email", email)
                 .setExpiration(new Date(now + REFRESH_TOKEN_TIME)) // 만료 시간
                 .setIssuedAt(new Date(now)) // 생성 시간
                 .signWith(key, signatureAlgorithm) // 암호화 알고리즘
