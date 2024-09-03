@@ -1,5 +1,11 @@
 package com.sparta.newsfeed.auth.filter;
 
+import com.sparta.newsfeed.auth.strategy.AuthorizationStrategy;
+import com.sparta.newsfeed.auth.strategy.CommentAuthorization;
+import com.sparta.newsfeed.auth.strategy.PostAuthorization;
+import com.sparta.newsfeed.auth.strategy.ProfileAuthorization;
+import com.sparta.newsfeed.auth.template.PostRequestHandler;
+import com.sparta.newsfeed.auth.template.RequestHandler;
 import com.sparta.newsfeed.auth.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
@@ -8,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.StringUtils;
-
 import java.io.IOException;
 
 @Slf4j
@@ -49,34 +54,75 @@ public class authFilter implements Filter {
                 Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
 
 
+                /*// 게시글 수정 및 삭제
+                if (requestURI.startsWith("/posts/")) {
+                    if(requestURI.endsWith("likes")) {
+                        if (method.equals("DELETE")) {
 
-                // 게시글 수정 및 삭제
-                if (requestURI.startsWith("/posts/") && !requestURI.endsWith("likes")) {
+                            String postIdStr = requestURI.split("/")[2];
+                            Long postId = Long.valueOf(postIdStr);
+                            User user = postRepository.findById(postId).getUser();
 
-                    if(method.equals("UPDATE") || method.equals("DELETE")) {
+                            if(isSameUser(info, user)) {
+                                filterChain.doFilter(request, response);
+                            } else {
+                                throw new IllegalArgumentException();
+                            }
 
-                        String postIdStr = requestURI.split("/")[2];
-                        Long postId = Long.valueOf(postIdStr);
-                        User user = postRepository.findById(postId).getUser();
-
-                        isSameUser(info, user, request, response, filterChain);
+                        } else {
+                            filterChain.doFilter(request, response);
+                        }
                     } else {
-                        filterChain.doFilter(request, response);
-                    }
+                        if(method.equals("UPDATE") || method.equals("DELETE")) {
 
+                            String postIdStr = requestURI.split("/")[2];
+                            Long postId = Long.valueOf(postIdStr);
+                            User user = postRepository.findById(postId).getUser();
+
+                            if(isSameUser(info, user)) {
+                                filterChain.doFilter(request, response);
+                            } else {
+                                throw new IllegalArgumentException();
+                            }
+
+                        } else {
+                            filterChain.doFilter(request, response);
+                        }
+                    }
                 }
                 // 댓글 수정 및 삭제
-                else if (requestURI.startsWith("/comments/}") && !requestURI.endsWith("likes")) {
+                else if (requestURI.startsWith("/comments/")) {
+                    if(requestURI.endsWith("likes")) {
+                        if (method.equals("DELETE")) {
 
-                    if(method.equals("UPDATE") || method.equals("DELETE")) {
+                            String postIdStr = requestURI.split("/")[2];
+                            Long postId = Long.valueOf(postIdStr);
+                            User user = postRepository.findById(postId).getUser();
 
-                        String commentIdStr = requestURI.split("/")[2];
-                        Long commenttId = Long.valueOf(commentIdStr);
-                        User user = commentRepository.findById(commenttId).getUser();
+                            if(isSameUser(info, user)) {
+                                filterChain.doFilter(request, response);
+                            } else {
+                                throw new IllegalArgumentException();
+                            }
 
-                        isSameUser(info, user, request, response, filterChain);
+                        } else {
+                            filterChain.doFilter(request, response);
+                        }
                     } else {
-                        filterChain.doFilter(request, response);
+                        if(method.equals("UPDATE") || method.equals("DELETE")) {
+
+                            String commentIdStr = requestURI.split("/")[2];
+                            Long commenttId = Long.valueOf(commentIdStr);
+                            User user = commentRepository.findById(commenttId).getUser();
+
+                            if(isSameUser(info, user)) {
+                                filterChain.doFilter(request, response);
+                            } else {
+                                throw new IllegalArgumentException();
+                            }
+                        } else {
+                            filterChain.doFilter(request, response);
+                        }
                     }
                 }
 
@@ -90,7 +136,11 @@ public class authFilter implements Filter {
                             Long prodfileId = Long.valueOf(prodfileIdStr);
                             User user = postRepository.findById(prodfileId).getUser();
 
-                            isSameUser(info, user, request, response, filterChain);
+                            if(isSameUser(info, user)) {
+                                filterChain.doFilter(request, response);
+                            } else {
+                                throw new IllegalArgumentException();
+                            }
 
                         } else {
                             // follow 조회는 패스
@@ -106,18 +156,28 @@ public class authFilter implements Filter {
                             Long prodfileId = Long.valueOf(prodfileIdStr);
                             User user = postRepository.findById(prodfileId).getUser();
 
-                            isSameUser(info, user, request, response, filterChain);
+                            if(isSameUser(info, user)) {
+                                filterChain.doFilter(request, response);
+                            } else {
+                                throw new IllegalArgumentException();
+                            }
 
                         } else {
                             // profile 조회는 패스
                             filterChain.doFilter(request, response);
                         }
                     }
+                }*/
 
-
+                if (requestURI.startsWith("/posts/")) {
+                    handlePostRequest(requestURI, method, info);
+                } else if (requestURI.startsWith("/comments/")) {
+                    handleCommentRequest(requestURI, method, info);
+                } else if (requestURI.startsWith("/profiles/")) {
+                    handleProfileRequest(requestURI, method, info);
                 }
 
-
+                filterChain.doFilter(request, response);
 
             } else {
                 throw new IllegalArgumentException("Not Found Token");
@@ -125,15 +185,46 @@ public class authFilter implements Filter {
         }
     }
 
-    public void isSameUser(Claims info, User user,
-                           ServletRequest request,
-                           ServletResponse response,
-                           FilterChain filterChain) throws ServletException, IOException {
+    /*private boolean isSameUser(Claims info, User user) throws ServletException, IOException {
 
         if(user.getEmail() == info.getSubject()) {
-            filterChain.doFilter(request, response);;
+            return true;
         } else {
-            throw new IllegalArgumentException();
+            return false;
         }
+    }*/
+
+    private void handlePostRequest(String requestURI, String method, Claims info) {
+        if (method.equals("UPDATE") || method.equals("DELETE")) {
+            Long postId = extractResourceId(requestURI);
+            AuthorizationStrategy authStrategy = new PostAuthorization(postRepository);
+            if (!authStrategy.isAuthorized(info, postId)) {
+                throw new IllegalArgumentException("Unauthorized");
+            }
+        }
+    }
+
+    private void handleCommentRequest(String requestURI, String method, Claims info) {
+        if (method.equals("UPDATE") || method.equals("DELETE")) {
+            Long commentId = extractResourceId(requestURI);
+            AuthorizationStrategy authStrategy = new CommentAuthorization(commentRepository);
+            if (!authStrategy.isAuthorized(info, commentId)) {
+                throw new IllegalArgumentException("Unauthorized");
+            }
+        }
+    }
+
+    private void handleProfileRequest(String requestURI, String method, Claims info) {
+        if (method.equals("UPDATE") || method.equals("DELETE")) {
+            Long profileId = extractResourceId(requestURI);
+            AuthorizationStrategy authStrategy = new ProfileAuthorization(profileRepository);
+            if (!authStrategy.isAuthorized(info, profileId)) {
+                throw new IllegalArgumentException("Unauthorized");
+            }
+        }
+    }
+
+    private Long extractResourceId(String requestURI) {
+        return Long.valueOf(requestURI.split("/")[2]);
     }
 }
