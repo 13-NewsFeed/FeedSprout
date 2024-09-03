@@ -3,7 +3,7 @@ package com.sparta.newsfeed.user.entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-public class Comment {
+public class Bookmark {
 
     @ManyToOne
     @JoinColumn(name = "user_id")

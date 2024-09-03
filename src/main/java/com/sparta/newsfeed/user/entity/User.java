@@ -1,6 +1,8 @@
 package com.sparta.newsfeed.user.entity;
 
 
+import com.sparta.newsfeed.comment.entity.Comment;
+import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,21 +38,31 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "user")
     private List<Post> postList = new ArrayList<>();
 
+
     // 댓글과의 일대다 양방향관계
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();
 
+
     // 게시글 좋아요와의 일대다 관계
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostLikes> postLikesjList = new ArrayList<>();
 
+
     // 댓글 좋아요와의 일대다 관계
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentLikes> commentLikesList = new ArrayList<>();
 
-    // 팔로워와의 일대다 관계
 
-    // 북마크와의 관계
+    // 팔로워와의 일대다 관계
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follower> followers;
+
+
+    // 북마크와의 일대다 관계(북마크가 하나의 유저만 참조, 북마크 공유가 제한?)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bookmark> bookmarkList = new ArrayList<>();
+
 
     // 이미지와의 일대일 단방향 관계
     @OneToOne(mappedBy = "imageUrl")
@@ -62,6 +74,4 @@ public class User extends TimeStamp {
         this.password = requestDto.getPassword();
 
     }
-
-
 }
