@@ -30,6 +30,7 @@ public class User extends TimeStamp {
 
 
     public User(UserRequestDto requestDto){
+
         this.email = requestDto.getEmail();
         this.password = requestDto.getPassword();
 

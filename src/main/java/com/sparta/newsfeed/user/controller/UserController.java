@@ -20,7 +20,7 @@ public class UserController {
     }
 
     // 프로필 생성
-    @PostMapping("/createdProfile/")
+    @PostMapping("/profiles/")
     public ResponseEntity<UserResponseDto> createProfile(@RequestBody UserRequestDto requestDto) {
         try{
             // 사용자 서비스 호출 생성

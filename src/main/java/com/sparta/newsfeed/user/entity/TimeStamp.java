@@ -17,6 +17,7 @@ public abstract class TimeStamp {
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime created_at;
+
     @LastModifiedDate
     @Column
     @Temporal(TemporalType.TIMESTAMP)

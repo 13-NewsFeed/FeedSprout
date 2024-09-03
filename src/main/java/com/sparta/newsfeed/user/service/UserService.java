@@ -69,5 +69,6 @@ public class UserService {
         User updateUser = userRepository.save(user);
 
         return new UserResponseDto(updateUser);
+
     }
 }
