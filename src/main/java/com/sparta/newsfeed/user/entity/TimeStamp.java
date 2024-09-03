@@ -1,4 +1,4 @@
-package com.sparta.newsfeed.post.entity;
+package com.sparta.newsfeed.user.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,15 +11,15 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class Timestamped {
+public abstract class TimeStamp {
 
     @CreatedDate
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime createdAt;
+    private LocalDateTime created_at;
 
     @LastModifiedDate
     @Column
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime modifiedAt;
+    private LocalDateTime  modified_at;
 }
