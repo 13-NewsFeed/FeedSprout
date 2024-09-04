@@ -4,16 +4,16 @@ import com.sparta.newsfeed.like.dto.LikeResponseDto;
 import com.sparta.newsfeed.like.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import com.sparta.newsfeed.like.dto.StatusResult; 
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+
 @RequestMapping("/likes")
 public class LikeController {
     private final LikeService likeService;
-
     //게시글 좋아요
-
     @PostMapping("/posts/{id}")
     public ResponseEntity<LikeResponseDto> postLike(
             @PathVariable Long id , @PathVariable Long postId){
@@ -33,6 +33,4 @@ public class LikeController {
 
         return ResponseEntity.ok(response);
     }
-
-
 }

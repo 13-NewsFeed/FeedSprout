@@ -11,8 +11,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -37,6 +39,35 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes;
 
+    // 게시글과의 일대다 양방향관계
+    @OneToMany(mappedBy = "user")
+    private List<Post> postList = new ArrayList<>();
+
+
+    // 댓글과의 일대다 양방향관계
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
+
+
+    // 게시글 좋아요와의 일대다 관계
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostLikes> postLikesjList = new ArrayList<>();
+
+
+    // 댓글 좋아요와의 일대다 관계
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentLikes> commentLikesList = new ArrayList<>();
+
+
+    // 북마크와의 일대다 관계(북마크가 하나의 유저만 참조, 북마크 공유가 제한?)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bookmark> bookmarkList = new ArrayList<>();
+
+
+    // 이미지와의 일대일 단방향 관계
+    @OneToOne(mappedBy = "imageUrl")
+    private Image image;
+
     public User(UserRequestDto requestDto){
 
         this.email = requestDto.getEmail();
@@ -45,11 +76,11 @@ public class User extends TimeStamp {
 
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Post> posts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Comment> comments = new ArrayList<>();
-
+    // 내가 팔로우한 애들
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<Follow> followers = new HashSet<>();
+    // 니들이 나한테 건 팔로우
+    @OneToMany(mappedBy = "followee", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<Follow> followees = new HashSet<>();
 
 }

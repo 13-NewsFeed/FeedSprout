@@ -30,6 +30,7 @@ public class Post extends Timestamped {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes;
 
+  
     public static Post createPost(PostRequestDto dto, User user) {
         return new Post(
                 user,

@@ -1,8 +1,11 @@
 package com.sparta.newsfeed.user.controller;
 
+import com.sparta.newsfeed.user.dto.FollowResponseDto;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
+import com.sparta.newsfeed.user.entity.Follow;
 import com.sparta.newsfeed.user.entity.User;
+import com.sparta.newsfeed.user.service.UserFeatureService;
 import com.sparta.newsfeed.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserFeatureService userFeatureService;
 
-    public UserController(UserService userService){
+    public UserController(UserService userService, UserFeatureService userFeatureService){
         this.userService = userService;
+        this.userFeatureService = userFeatureService;
     }
 
     // 프로필 생성
@@ -71,5 +76,13 @@ public class UserController {
             // 서버 오류 : 500 코드로 에러 메세지 반환 (문자열로 반환)
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+    }
+
+    @PostMapping("/profiles/{id}/follows")
+    public ResponseEntity<?> followUser(@RequestParam(value = "from") Long from,
+                                        @RequestParam(value = "to") Long to) {
+        FollowResponseDto followResponseDto = userFeatureService.followUser(from, to);
+
+        return ResponseEntity.ok().body(followResponseDto);
     }
 }

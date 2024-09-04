@@ -12,8 +12,8 @@ public class UserResponseDto {
     private String password;
     private String email;
     private String nickname;
-    private LocalDateTime created_at;
-    private LocalDateTime modified_at;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
     private String role;
 
 
@@ -22,8 +22,8 @@ public class UserResponseDto {
         this.password = user.getPassword();
         this.email = user.getEmail();
         this.nickname = user.getNickname();
-        this.created_at = user.getCreated_at();
-        this.modified_at = user.getModified_at();
+        this.createdAt = user.getCreatedAt();
+        this.modifiedAt = user.getModifiedAt();
 
     }
 }

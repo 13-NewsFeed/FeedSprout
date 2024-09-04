@@ -11,25 +11,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Comment extends Timestamped{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String contents;
 
-    public Comment(String contents, Long postId, Long userId) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public Comment(String contents, Post post, User user) {
         this.contents = contents;
+        this.post = post;
+        this.user = user;
     }
 
     public void update(String contents){
         this.contents = contents;
     }
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
 
 }
