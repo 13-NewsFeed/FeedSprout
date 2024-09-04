@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.comment.controller;
 
 import com.sparta.newsfeed.auth.dto.AuthUser;
+import com.sparta.newsfeed.comment.dto.ReCommentGetResponseDto;
 import com.sparta.newsfeed.comment.dto.ReCommentSaveRequestDto;
 import com.sparta.newsfeed.comment.dto.ReCommentSaveResponseDto;
 import com.sparta.newsfeed.comment.entity.ReComment;
@@ -29,6 +30,17 @@ public class ReCommentController {
     }
 
     // 대댓글 개별 조회
+    @GetMapping("/recomments/{recommentId}")
+    public ResponseEntity<ReCommentGetResponseDto> getReComment(
+            @PathVariable(name = "postId") Long postId,
+            @PathVariable(name = "commentId") Long commentId,
+            AuthUser authUser,
+            @PathVariable(name = "recommentId") Long recommentId
+    ){
+        return ResponseEntity.ok(reCommentService.getReComment(
+                postId, commentId, authUser, recommentId
+        ));
+    }
 
     // 대댓글 수정
 

@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.comment.service;
 
 import com.sparta.newsfeed.auth.dto.AuthUser;
+import com.sparta.newsfeed.comment.dto.ReCommentGetResponseDto;
 import com.sparta.newsfeed.comment.dto.ReCommentSaveRequestDto;
 import com.sparta.newsfeed.comment.dto.ReCommentSaveResponseDto;
 import com.sparta.newsfeed.comment.entity.Comment;
@@ -59,6 +60,44 @@ public class ReCommentService {
                 savedReComment.getCreatedAt(),
                 savedReComment.getModifiedAt()
         );
+    }
+
+    // 특정 id를 가진 대댓글 조회
+    public ReCommentGetResponseDto getReComment(
+            Long postId,
+            Long commentId,
+            AuthUser authUser,
+            Long reCommentId
+    ){
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new RuntimeException("Post not found")
+        );
+
+        User user = userRepository.findById(authUser.getId()).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new RuntimeException("Comment not found")
+        );
+
+        ReComment reComment = reCommentRepository.findById(reCommentId).orElseThrow(
+                () -> new RuntimeException("Recomment not found")
+        );
+
+        return new ReCommentGetResponseDto(
+                reComment.getId(),
+                reComment.getContents(),
+                comment.getId(),
+                authUser.getId(),
+                reComment.getCreatedAt(),
+                reComment.getModifiedAt()
+        );
+
+
+
+
+
     }
 
 
