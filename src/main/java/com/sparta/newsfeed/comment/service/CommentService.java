@@ -3,7 +3,9 @@ package com.sparta.newsfeed.comment.service;
 import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.comment.dto.*;
 import com.sparta.newsfeed.comment.entity.Comment;
+import com.sparta.newsfeed.comment.entity.ReComment;
 import com.sparta.newsfeed.comment.repository.CommentRepository;
+import com.sparta.newsfeed.comment.repository.ReCommentRepository;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.entity.User;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final ReCommentRepository reCommentRepository;
 
 
     // 댓글 생성 요청을 받아 저장
@@ -63,22 +67,35 @@ public class CommentService {
             int page,
             int size
     ) {
-        User user = userRepository.findById(authUser.getId()).orElseThrow(
-                () -> new RuntimeException("User not found")
-        );
-
         Pageable pageable = PageRequest.of(page - 1, size);
 
         Page<Comment> comments = commentRepository.findAll(pageable);
 
-        return comments.map(comment -> new CommentGetAllResponseDto(
+        return comments.map(comment -> {
+            List<Long> reCommentIds = comment.getReComments()
+                    .stream()
+                    .map(ReComment::getId)
+                    .collect(Collectors.toList());
+
+            return new CommentGetAllResponseDto(
+                    comment.getId(),
+                    comment.getContents(),
+                    postId,
+                    authUser.getId(),
+                    comment.getCreatedAt(),
+                    comment.getModifiedAt(),
+                    reCommentIds
+            );
+        });
+
+        /*return comments.map(comment -> new CommentGetAllResponseDto(
                 comment.getId(),
                 comment.getContents(),
                 postId,
                 authUser.getId(),
                 comment.getCreatedAt(),
                 comment.getModifiedAt()
-        ));
+        ));*/
 
     }
 
