@@ -1,15 +1,38 @@
 package com.sparta.newsfeed.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.sparta.newsfeed.post.entity.Post;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@Table(name = "image")
+@NoArgsConstructor
 public class Image {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-/*
-    private String imageUrl;*/
+    @Column(name = "imageUrl")
+    private String imageUrl;
+    @Column
+    private String category;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    public Image(String imageUrl, User user) {
+        this.imageUrl = imageUrl;
+        this.user = user;
+    }
 }

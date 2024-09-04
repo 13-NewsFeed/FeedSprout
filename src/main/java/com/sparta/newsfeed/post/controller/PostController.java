@@ -38,7 +38,7 @@ public class PostController {
     @GetMapping("/posts/editedDate")       // 게시글 조회 (수정일자 내림차순)
     public ResponseEntity<List<PostResponseDto>> getPostsByTime(
             AuthUser authUser,
-            @RequestParam(defaultValue = "1", required = false) int pageNo,
+            @RequestParam(defaultValue = "0", required = false) int pageNo,
             @RequestParam(defaultValue = "10", required = false) int pageSize
     ) {
         List<PostResponseDto> response = postService.getPostsByTime(authUser, pageNo, pageSize);
@@ -48,7 +48,7 @@ public class PostController {
     @GetMapping("/posts/likes")       // 게시글 조회 (좋아요 많은순 내림차순)
     public ResponseEntity<List<PostResponseDto>> getPostsByLikes(
             AuthUser authUser,
-            @RequestParam(defaultValue = "1", required = false) int pageNo,
+            @RequestParam(defaultValue = "0", required = false) int pageNo,
             @RequestParam(defaultValue = "10", required = false) int pageSize
     ) {
         List<PostResponseDto> response = postService.getPostsByLikes(authUser, pageNo, pageSize);

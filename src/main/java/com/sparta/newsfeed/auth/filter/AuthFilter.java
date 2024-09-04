@@ -86,25 +86,6 @@ public class AuthFilter implements Filter {
     private AuthorizationStrategy handlerRequest(String requestURI) throws ServletException, IOException {
         AuthorizationStrategy authStrategy = null;
 
-        /*String start = requestURI.split("/")[1];
-        switch (start) {
-            case "posts": {
-                authStrategy = new PostAuthorization(postRepository);
-                break;
-            }
-            case "comments": {
-                authStrategy = new CommentAuthorization(commentRepository);
-                break;
-            }
-            case "profiles": {
-                authStrategy = new ProfileAuthorization(userRepository);
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException("not found");
-            }
-        }*/
-
         if (requestURI.matches("^/posts/\\d+/comments/\\d+$")) {
             // "/posts/{postId}/comments/{commentId}" 패턴에 매칭
             authStrategy = new CommentAuthorization(commentRepository);

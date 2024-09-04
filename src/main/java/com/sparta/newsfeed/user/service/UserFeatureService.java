@@ -48,7 +48,7 @@ public class UserFeatureService {
     }
 
 
-    // 나한테 팔로우 건 애들 가져오기
+    // 나랑 팔로우인 애들 가져오기
     public List<String> getFollowers(Long userId) {
         User user = userRepository.findById(userId).
                 orElseThrow(() -> new IllegalArgumentException("userId를 찾을 수 없습니다."));

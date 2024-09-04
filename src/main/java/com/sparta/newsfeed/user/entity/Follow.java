@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -21,12 +20,12 @@ public class Follow {
     @Enumerated(EnumType.STRING)
     private FollowState state;
 
-    // 팔로우를 나한테 건 애들
+    // 팔로우를 거는 애들
     @ManyToOne
     @JoinColumn(name = "follower_id")
     private User follower;
 
-    // 내가 팔로우를 건 애들
+    // 팔로우를 받는 애들
     @ManyToOne
     @JoinColumn(name = "followee_id")
     private User followee;

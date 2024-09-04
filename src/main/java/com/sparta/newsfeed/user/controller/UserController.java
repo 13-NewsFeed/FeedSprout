@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.user.controller;
 
+import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.user.dto.FollowResponseDto;
@@ -70,10 +71,10 @@ public class UserController {
     }
 
     // 팔로우 걸기
-    @PostMapping("/profiles/{id}/follows")
-    public ResponseEntity<FollowResponseDto> followUser(@RequestParam(value = "from") Long from,
-                                        @RequestParam(value = "to") Long to) {
-        FollowResponseDto followResponseDto = userFeatureService.followUser(from, to);
+    @PostMapping("/profiles/follows/{followeeId}")
+    public ResponseEntity<FollowResponseDto> followUser(AuthUser user,
+                                                        @PathVariable(name = "followeeId") Long followeeId) {
+        FollowResponseDto followResponseDto = userFeatureService.followUser(user.getId(), followeeId);
 
         return ResponseEntity.ok().body(followResponseDto);
     }
@@ -112,7 +113,7 @@ public class UserController {
     }
 
     // 팔로우 승낙 혹은 거절하기
-    @PostMapping("/update")
+    @PostMapping("/profiles/follows")
     public ResponseEntity<Void> updateFollowState(
             @RequestParam Long followerId, @RequestParam Long followeeId, @RequestParam String state) {
         userFeatureService.updateFollowState(followerId, followeeId, state);

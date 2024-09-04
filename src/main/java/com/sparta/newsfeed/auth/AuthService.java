@@ -6,6 +6,7 @@ import com.sparta.newsfeed.auth.util.JwtUtil;
 import com.sparta.newsfeed.config.UserPasswordEncoder;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
+import com.sparta.newsfeed.user.entity.Image;
 import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
