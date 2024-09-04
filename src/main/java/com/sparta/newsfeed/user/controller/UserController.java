@@ -1,12 +1,9 @@
 package com.sparta.newsfeed.user.controller;
 
-import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.user.dto.FollowResponseDto;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
-import com.sparta.newsfeed.user.entity.Follow;
-import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.user.service.UserFeatureService;
 import com.sparta.newsfeed.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -15,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -32,16 +28,6 @@ public class UserController {
         this.userFeatureService = userFeatureService;
     }
 
-    // 프로필 생성
-    @PostMapping("/profiles/")
-    public ResponseEntity<?> createProfile(@RequestBody UserRequestDto requestDto, BindingResult bindingResult) {
-
-        // 사용자 서비스 호출 생성
-        UserResponseDto userResponseDto = userService.createProfile(requestDto);
-        // 성공적 생성 -> 201 상태 코드로 생성된 사용자를 반환
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
-
-    }
 
 
     // 프로필 조회
@@ -74,6 +60,7 @@ public class UserController {
         }
     }
 
+    // 팔로우 걸기
     @PostMapping("/profiles/{id}/follows")
     public ResponseEntity<?> followUser(@RequestParam(value = "from") Long from,
                                         @RequestParam(value = "to") Long to) {
