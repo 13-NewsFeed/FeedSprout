@@ -57,6 +57,11 @@ public class ReCommentController {
     }
 
     // 대댓글 삭제
+    @DeleteMapping("/recomments/{recommentId}")
+    public void deleteReComment(@PathVariable(name = "recommentId") Long recommentId){
+        reCommentService.deleteReComment(recommentId);
+    }
+
 
 
 

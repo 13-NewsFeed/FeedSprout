@@ -129,14 +129,11 @@ public class ReCommentService {
                 reComment.getCreatedAt(),
                 reComment.getModifiedAt()
         );
-
-
-
-
     }
 
-
-
-
-
+    // 특정 id를 가진 대댓글 삭제
+    @Transactional
+    public void deleteReComment(Long recommentId) {
+        reCommentRepository.deleteById(recommentId);
+    }
 }
