@@ -9,6 +9,9 @@ import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,15 +55,37 @@ public class CommentService {
     }
 
     // 특정 게시글의 댓글 전부 조회
-    public List<CommentGetAllResponseDto> getAllComments(Long postId, AuthUser authUser) {
-        List<Comment> commentList = commentRepository.findByPostId(postId);
-
+    public Page<CommentGetAllResponseDto> getAllComments(
+            Long postId,
+            AuthUser authUser,
+            int page,
+            int size
+    ) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(
                 () -> new RuntimeException("User not found")
         );
 
-        List<CommentGetAllResponseDto> dtoList = new ArrayList<>();
-        for (Comment comment : commentList) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<Comment> comments = commentRepository.findAll(pageable);
+
+        return comments.map(comment -> new CommentGetAllResponseDto(
+                comment.getId(),
+                comment.getContents(),
+                postId,
+                authUser.getId(),
+                comment.getCreatedAt(),
+                comment.getModifiedAt()
+        ));
+
+
+
+
+
+
+
+
+        /*for (Comment comment : commentList) {
             CommentGetAllResponseDto dto = new CommentGetAllResponseDto(
                     comment.getId(),
                     comment.getContents(),
@@ -71,7 +96,7 @@ public class CommentService {
             );
             dtoList.add(dto);
         }
-        return dtoList;
+        return dtoList;*/
     }
 
     // 특정 댓글 내용 수정
