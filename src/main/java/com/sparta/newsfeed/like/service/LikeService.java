@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.like.service;
 
+
 import com.sparta.newsfeed.comment.entity.Comment;
 import com.sparta.newsfeed.comment.repository.CommentRepository;
 import com.sparta.newsfeed.like.dto.LikeResponseDto;
@@ -11,7 +12,6 @@ import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -65,9 +65,7 @@ public class LikeService {
             likeRepository.delete(like.get());
             return new LikeResponseDto("좋아요 취소",404);
         }
-
     }
-
     //1) 사용자가 게시글에 좋아요를 누를때 호출
     //2) 먼저 게시글 존재 확인 후, 사용자가 이미 좋아요 눌렀는지 확인
     //3) 적절한 응답 반환
@@ -77,7 +75,4 @@ public class LikeService {
     //increaseLikeCount , decreaseLikeCount
 
     //게시글 좋아요
-
-
-
 }
