@@ -37,6 +37,7 @@ public class UserFeatureService {
         return new FollowResponseDto(savedFollow);
     }
 
+
     // 팔로우 삭제
     public void deleteFollower(Long followerId, Long followeeId) {
         Follow follow = followRepository.findByFollowerIdAndFolloweeId(followerId, followeeId)
@@ -61,6 +62,7 @@ public class UserFeatureService {
 
         return followerList;
     }
+
 
     // 내가 팔로우 건 애들 가져오기
     public List<String> getFollowees(Long userId) {
@@ -92,6 +94,7 @@ public class UserFeatureService {
 
         return waitingList;
     }
+
 
     // 팔로우 승낙 혹은 거절하기
     public void updateFollowState(Long followerId, Long followeeId, String state) {

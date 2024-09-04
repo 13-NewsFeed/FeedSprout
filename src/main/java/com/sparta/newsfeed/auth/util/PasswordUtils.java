@@ -1,4 +1,4 @@
-package com.sparta.newsfeed.user.util;
+package com.sparta.newsfeed.auth.util;
 
 public class PasswordUtils {
 

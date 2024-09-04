@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -29,7 +30,6 @@ public class UserController {
     }
 
 
-
     // 프로필 조회
     @GetMapping("/profiles/{id}")
     public ResponseEntity<UserResponseDto> getProfileById(@PathVariable Long id) {
@@ -37,9 +37,18 @@ public class UserController {
         UserResponseDto userResponseDto = userService.getProfileById(id);
         // 성공적 조회 : 200 상태 코드로 조회된 사용자 정보를 반환
         return ResponseEntity.ok(userResponseDto);
-
     }
 
+    // 회원 탈퇴
+    @DeleteMapping("/profiles/{userId}")
+    public ResponseEntity<String> deleteProfile(@PathVariable Long userId) {
+        try {
+            userService.deleteProfile(userId);
+            return ResponseEntity.ok().body("Withdraw Success");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred during login");
+        }
+    }
 
 
     // 프로필 수정
@@ -62,7 +71,7 @@ public class UserController {
 
     // 팔로우 걸기
     @PostMapping("/profiles/{id}/follows")
-    public ResponseEntity<?> followUser(@RequestParam(value = "from") Long from,
+    public ResponseEntity<FollowResponseDto> followUser(@RequestParam(value = "from") Long from,
                                         @RequestParam(value = "to") Long to) {
         FollowResponseDto followResponseDto = userFeatureService.followUser(from, to);
 

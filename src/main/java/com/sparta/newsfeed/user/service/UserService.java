@@ -1,11 +1,11 @@
 package com.sparta.newsfeed.user.service;
 
+import com.sparta.newsfeed.auth.util.PasswordUtils;
 import com.sparta.newsfeed.config.UserPasswordEncoder;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
 import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.user.repository.UserRepository;
-import com.sparta.newsfeed.user.util.PasswordUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserPasswordEncoder userPasswordEncoder;
 
-    // 프로필 생성
+/*    // 프로필 생성
     @Transactional
     public UserResponseDto createProfile(UserRequestDto requestDto) {
         if (requestDto.getEmail() == null || requestDto.getUsername() == null) {
@@ -36,8 +36,16 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         return new UserResponseDto(savedUser);
-    }
+    }*/
 
+
+    // 회원 탈퇴
+    public UserResponseDto deleteProfile(Long userId) {
+
+        User user = userRepository.findById(userId).orElseThrow();
+        userRepository.delete(user);
+        return new UserResponseDto(user);
+    }
 
     // 프로필 조회
     public UserResponseDto getProfileById(Long id) {
@@ -87,7 +95,7 @@ public class UserService {
         PasswordUtils.checkPasswordFormat(requestDto.getPassword());
 
         // 현재 비밀번호와 새로운 비밀번호가 같은 경우
-        if (userPasswordEncoder.matches(requestDto.getNewPassword(), user.getPassword())) {
+        if (!requestDto.getPassword().equals(requestDto.getNewConfirmPassword())) {
             throw new IllegalArgumentException("현재 비밀번호와 동일한 비밀번호로 변경할 수 없습니다.");
         }
 
