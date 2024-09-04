@@ -25,7 +25,7 @@ public class AuthController {
     private final UserRepository userRepository;
 
 
-    // 프로필 생성
+/*    // 프로필 생성
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequestDto requestDto) {
 
@@ -34,7 +34,7 @@ public class AuthController {
         // 성공적 생성 -> 201 상태 코드로 생성된 사용자를 반환
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
 
-    }
+    }*/
 
 
     // 로그인

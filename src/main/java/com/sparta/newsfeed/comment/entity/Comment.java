@@ -1,5 +1,7 @@
 package com.sparta.newsfeed.comment.entity;
 
+import com.sparta.newsfeed.user.entity.User;
+import jakarta.persistence.*;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.user.entity.User;
 import jakarta.persistence.*;
@@ -29,8 +31,10 @@ public class Comment extends Timestamped{
         this.user = user;
     }
 
+
     public void update(String contents){
         this.contents = contents;
     }
 
+   
 }

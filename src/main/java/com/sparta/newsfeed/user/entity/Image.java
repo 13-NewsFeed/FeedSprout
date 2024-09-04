@@ -10,6 +10,6 @@ public class Image {
     @Id
     @GeneratedValue
     private Long id;
-
-    private String imageUrl;
+/*
+    private String imageUrl;*/
 }

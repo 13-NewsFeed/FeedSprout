@@ -1,7 +1,5 @@
 package com.sparta.newsfeed.auth;
 
-
-import com.sparta.newsfeed.config.UserPasswordEncoder;
 import com.sparta.newsfeed.auth.dto.LoginRequestDto;
 import com.sparta.newsfeed.auth.dto.LoginResponseDto;
 import com.sparta.newsfeed.auth.util.JwtUtil;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final JwtUtil jwtUtil;
-    private final UserPasswordEncoder userPasswordEncoder;
     private final UserRepository userRepository;
 
     // 프로필 생성
@@ -45,7 +42,6 @@ public class AuthService {
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
-
         User user = userRepository.findByEmail(email).get();
         if(userPasswordEncoder.matches(password, user.getPassword())) {
 
@@ -58,5 +54,6 @@ public class AuthService {
             return null;
         }
     }
-
 }
+
+
