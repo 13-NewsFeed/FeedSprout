@@ -51,6 +51,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(String.valueOf(email)) // 사용자 식별자값(ID)
+                .claim(String.valueOf(user.getId()), "userId")
                 .setExpiration(new Date(now + ACCESS_TOKEN_TIME)) // 만료 시간
                 .setIssuedAt(new Date(now)) // 생성 시간
                 .signWith(key, signatureAlgorithm) // 암호화 알고리즘
