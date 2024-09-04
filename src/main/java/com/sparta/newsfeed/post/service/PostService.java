@@ -66,6 +66,7 @@ public class PostService {
 
     public List<PostResponseDto> getPostsByTime(AuthUser authUser, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo-1, pageSize, Sort.by("modifiedAt").descending());
+
         return postRepository.findByUserId(authUser.getId(), pageable)
                 .stream()
                 .map(PostResponseDto::new)
@@ -75,18 +76,19 @@ public class PostService {
     public List<PostResponseDto> getPostsByLikes(AuthUser authUser, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo-1, pageSize);
         Page<Post> postPage = postRepository.findByUserIdOrderByLikesCountDesc(authUser.getId(), pageable);
+
         // Page<Post> 결과를 PostResponseDto 리스트로 변환
         return postPage.stream()
                 .map(PostResponseDto::new)
                 .toList();
     }
 
-    public List<PostResponseDto> getPostsByFollowedUsers(AuthUser authUser, int page, int size) {
+    public List<PostResponseDto> getPostsByFollowedUsers(AuthUser authUser, int pageNo, int pageSize) {
         // 팔로우 목록 가져오기
         List<Long> followedUserIds = followRepository.findFolloweeIdsByFollowerId(authUser.getId());
 
         // 페이지 요청 설정
-        PageRequest pageRequest = PageRequest.of(page-1, size);
+        PageRequest pageRequest = PageRequest.of(pageNo-1, pageSize);
 
         // 팔로우한 사용자들의 게시물 가져오기
         Page<Post> postPage = postRepository.findByUserIdIn(followedUserIds, pageRequest);
@@ -97,14 +99,15 @@ public class PostService {
                 .toList();
     }
 
-    public List<PostResponseDto> getPostsByFollowedUser(AuthUser authUser, Long followeeId, int page, int size) {
+    public List<PostResponseDto> getPostsByFollowedUser(AuthUser authUser, Long followeeId, int pageNo, int pageSize) {
         // 팔로우 관계 확인
         boolean isFollowing = followRepository.existsByFollowerIdAndFolloweeId(authUser.getId(), followeeId);
         if (!isFollowing) {
-            throw new IllegalArgumentException("User is not following the specified followee.");
+            throw new IllegalArgumentException("팔로우를 한 사용자가 아닙니다.");
         }
+
         // followeeId 유저의 게시글 조회
-        Pageable pageable = PageRequest.of(page-1, size);
+        Pageable pageable = PageRequest.of(pageNo-1, pageSize);
         Page<Post> postPage = postRepository.findByUserId(followeeId, pageable);
 
         // 게시물을 DTO로 변환

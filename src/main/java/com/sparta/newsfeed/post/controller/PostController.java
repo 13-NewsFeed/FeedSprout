@@ -59,10 +59,10 @@ public class PostController {
     @GetMapping("/profiles/follows/posts")      // 팔로우 한 사람들 게시글 모두 조회
     public ResponseEntity<List<PostResponseDto>> getPostsByFollowUsers(
             AuthUser authUser,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize
     ) {
-        List<PostResponseDto> response = postService.getPostsByFollowedUsers(authUser, page, size);
+        List<PostResponseDto> response = postService.getPostsByFollowedUsers(authUser, pageNo, pageSize);
         return ResponseEntity.ok(response);
     }
 
@@ -71,10 +71,10 @@ public class PostController {
     public ResponseEntity<List<PostResponseDto>> getPostsByFollowedUser(
             AuthUser authUser,
             @PathVariable Long followeeId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize
     ) {
-        List<PostResponseDto> response = postService.getPostsByFollowedUser(authUser, followeeId, page, size);
+        List<PostResponseDto> response = postService.getPostsByFollowedUser(authUser, followeeId, pageNo, pageSize);
         return ResponseEntity.ok(response);
     }
 
