@@ -2,10 +2,7 @@ package com.sparta.newsfeed.user.service;
 
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
-import com.sparta.newsfeed.user.entity.Follow;
-import com.sparta.newsfeed.user.entity.FollowState;
 import com.sparta.newsfeed.user.entity.User;
-import com.sparta.newsfeed.user.repository.FollowRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,25 +13,6 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-
-    // 프로필 생성
-    @Transactional
-    public UserResponseDto createProfile(UserRequestDto requestDto) {
-        if (requestDto.getEmail() == null && requestDto.getNickname() == null) {
-            throw new IllegalArgumentException("Email과 nickname은 필수입니다.");
-        }
-        // 이메일 중복 체크.
-        if(userRepository.existsByEmail(requestDto.getEmail())){
-            throw new IllegalArgumentException("이미 사용하고 있는 Email 입니다.");
-        }
-
-        User user = new User(requestDto);
-
-        User savedUser = userRepository.save(user);
-
-        return new UserResponseDto(savedUser);
-
-    }
 
 
     // 프로필 조회 (readOnly)
