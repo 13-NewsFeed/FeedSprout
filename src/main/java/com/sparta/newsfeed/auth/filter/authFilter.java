@@ -55,7 +55,7 @@ public class authFilter implements Filter {
 
                 // 토큰 검증
                 if (!jwtUtil.validateToken(tokenValue)) {
-                    throw new IllegalArgumentException("Token Error");
+                    throw new IllegalArgumentException("Invalid Token");
                 }
 
                 // 토큰에서 사용자 정보 가져오기
@@ -87,15 +87,15 @@ public class authFilter implements Filter {
 
         String start = requestURI.split("/")[1];
         switch (start) {
-            case "post": {
+            case "posts": {
                 authStrategy = new PostAuthorization(postRepository);
                 break;
             }
-            case "comment": {
+            case "comments": {
                 authStrategy = new CommentAuthorization(commentRepository);
                 break;
             }
-            case "profile": {
+            case "profiles": {
                 authStrategy = new ProfileAuthorization(userRepository);
                 break;
             }

@@ -14,7 +14,6 @@ public class UserResponseDto {
     private String nickname;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    private String role;
 
 
     public UserResponseDto(User user) {
