@@ -1,43 +1,36 @@
 package com.sparta.newsfeed.like.controller;
 
-import com.sparta.newsfeed.like.dto.StatusResult;
+import com.sparta.newsfeed.like.dto.LikeResponseDto;
 import com.sparta.newsfeed.like.service.LikeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import com.sparta.newsfeed.like.dto.StatusResult; 
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/posts")
+
+@RequestMapping("/likes")
 public class LikeController {
     private final LikeService likeService;
-
     //게시글 좋아요
-    //요청을 @PathVariable 와 @AuthenticationPrincipal 로만 처리할 수 있음.(RequestDto 필요 x )
-    @PostMapping("/{post-id}/likes")
-    public StatusResult LikePost(@PathVariable Long id,
-                                 @AuthenticationPrincipal CustomFiled customFiled){
+    @PostMapping("/posts/{id}")
+    public ResponseEntity<LikeResponseDto> postLike(
+            @PathVariable Long id , @PathVariable Long postId){
 
-        return likeService.likePost(id, customFiled.getUser());   //<- User 변경.
+        LikeResponseDto response= likeService.postLike(id,postId);
+
+        return ResponseEntity.ok(response);
     }
+    //HTTP 상태 코드 제어:
+    // ResponseEntity를 사용하면 응답에 대한 HTTP 상태 코드를 명시적으로 지정할 수 있습니다.
+    //상태 코드를 넣어야 되나?
+    @PostMapping("/posts/{userId}/commnet/{comment-id}")
+    public  ResponseEntity<LikeResponseDto> commentLike
+            (@PathVariable Long userId,@PathVariable Long commentId){
 
-    // 게시글 좋아요 취소
-    @DeleteMapping("/{post-id}/likes")
-    public StatusResult deleteLikePost(@PathVariable Long id,
-                                       @AuthenticationPrincipal CustomFiled customFiled){
-        return likeService.deleteLikePost(id, customFiled.getUser());
-    }
+        LikeResponseDto response = likeService.commentLike(userId,commentId);
 
-    // 댓글 좋아요
-    @PostMapping("/comments/{comment-id}/likes")
-    public StatusResult likeComment(@PathVariable Long id,
-                                    @AuthenticationPrincipal CustomFiled customFiled){
-        return likeService.likeComment(id, customFiled.getUser());
-    }
-
-    // 댓글 좋아요 취소
-    @DeleteMapping("/comments/{comment-id}/likes")
-    public StatusResult deleteLikeComment(@PathVariable Long id,
-                                          @AuthenticationPrincipal CustomFiled customFiled){
-        return likeService.deleteLikeComment(id, customFiled.getUser());
+        return ResponseEntity.ok(response);
     }
 }

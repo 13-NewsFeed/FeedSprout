@@ -27,10 +27,10 @@ public class Post extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = {CascadeType.REMOVE})
-    private List<Like> likes = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes;
 
-
+  
     public static Post createPost(PostRequestDto dto, User user) {
         return new Post(
                 user,

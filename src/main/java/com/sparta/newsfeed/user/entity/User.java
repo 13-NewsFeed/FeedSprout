@@ -2,6 +2,7 @@ package com.sparta.newsfeed.user.entity;
 
 
 import com.sparta.newsfeed.comment.entity.Comment;
+import com.sparta.newsfeed.like.entity.Like;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import jakarta.persistence.*;
@@ -35,6 +36,8 @@ public class User extends TimeStamp {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes;
 
     // 게시글과의 일대다 양방향관계
     @OneToMany(mappedBy = "user")
