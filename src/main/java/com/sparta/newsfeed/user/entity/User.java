@@ -36,9 +36,6 @@ public class User extends TimeStamp {
     @Column(name = "username", nullable = false)
     private String username;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> likes;
-
     // 게시글과의 일대다 양방향관계
     @OneToMany(mappedBy = "user")
     private List<Post> postList = new ArrayList<>();

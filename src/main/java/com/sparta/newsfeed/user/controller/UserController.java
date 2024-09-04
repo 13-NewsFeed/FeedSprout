@@ -15,18 +15,18 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/v1")
 public class UserController {
 
     private final UserService userService;
     private final UserFeatureService userFeatureService;
-    public UserController(UserService userService, UserFeatureService userFeatureService){
+    public UserController(UserService userService, UserFeatureService userFeatureService ){
         this.userService = userService;
         this.userFeatureService = userFeatureService;
     }
 
     // 프로필 생성
-    @PostMapping("/users/")
+    @PostMapping("/profiles/")
     public ResponseEntity<?> createProfile(@RequestBody UserRequestDto requestDto) {
         try{
             // 사용자 서비스 호출 생성
@@ -44,7 +44,7 @@ public class UserController {
 
 
     // 프로필 조회
-    @GetMapping("/users/{id}")
+    @GetMapping("/profiles/{id}")
     public ResponseEntity<UserResponseDto> getProfileById(@PathVariable Long id) {
         try {
             UserResponseDto userResponseDto = userService.getProfileById(id);
@@ -60,9 +60,8 @@ public class UserController {
     }
 
 
-
     // 프로필 수정
-    @PutMapping("/users/{id}")
+    @PutMapping("/profiles/{id}")
     public ResponseEntity<UserResponseDto> updateProfile(@PathVariable Long id
             , @RequestBody UserRequestDto requestDto){
 
@@ -79,14 +78,26 @@ public class UserController {
         }
     }
 
-
-    @PostMapping("/users/{id}/follows")
-    public ResponseEntity<FollowResponseDto> followUser(@RequestParam(value = "from") Long fromId,
-                                        @RequestParam(value = "to") Long toId) {
-        FollowResponseDto followResponseDto = userFeatureService.followUser(fromId, toId);
+    //팔로우 추가
+    @PostMapping("/{id}/follows")
+    public ResponseEntity<FollowResponseDto> followUser(@RequestParam(value = "from") Long from,
+                                        @RequestParam(value = "to") Long to) {
+        FollowResponseDto followResponseDto = userFeatureService.followUser(from, to);
 
         return ResponseEntity.ok().body(followResponseDto);
     }
+
+    // 팔로워 삭제
+    @DeleteMapping("/delete/{id}/follows")
+    public ResponseEntity<String> deleteFollower(@RequestParam Long followerId, @RequestParam Long followeeId) {
+        try {
+            userFeatureService.deleteFollower(followerId, followeeId);
+            return ResponseEntity.ok("팔로워가 성공적으로 삭제되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
     // 나한테 팔로우 건 애들 가져오기
     @GetMapping("/{id}/followers")

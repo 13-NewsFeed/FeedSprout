@@ -67,6 +67,7 @@ public class UserService {
             user.setUsername(requestDto.getUsername());
         }
 
+
         // 이메일 업데이트
         if (requestDto.getEmail() != null) {
             if (userRepository.existsByEmail(requestDto.getEmail())) {
