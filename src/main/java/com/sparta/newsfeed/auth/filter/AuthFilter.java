@@ -20,13 +20,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @Order(2)
 @Component
 @RequiredArgsConstructor
-public class authFilter implements Filter {
+public class AuthFilter implements Filter {
 
     private final JwtUtil jwtUtil;
     private final PostRepository postRepository;

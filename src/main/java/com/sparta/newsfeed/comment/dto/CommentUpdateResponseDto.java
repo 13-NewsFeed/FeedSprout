@@ -9,15 +9,13 @@ import java.time.LocalDateTime;
 public class CommentUpdateResponseDto {
     private final Long id;
     private final String contents;
-    private final Post post;
     private final Long userId;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    public CommentUpdateResponseDto(Long id, String contents, Post post, Long userId, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public CommentUpdateResponseDto(Long id, String contents, Long userId, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.id = id;
         this.contents = contents;
-        this.post = post;
         this.userId = userId;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;

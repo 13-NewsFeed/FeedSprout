@@ -11,7 +11,7 @@ import java.io.IOException;
 @Slf4j(topic = "LoggingFilter")
 @Component
 @Order(1)
-public class loggingFilter implements Filter {
+public class LoggingFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {

@@ -89,11 +89,9 @@ public class CommentService {
                 () -> new RuntimeException("Comment not found")
         );
         comment.update(commentUpdateRequestDto.getContents());
-
         return new CommentUpdateResponseDto(
                 commentId,
                 comment.getContents(),
-                comment.getPost(),
                 authUser.getId(),
                 comment.getCreatedAt(),
                 comment.getModifiedAt()
