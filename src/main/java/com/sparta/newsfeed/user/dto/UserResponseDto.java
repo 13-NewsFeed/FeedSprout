@@ -10,6 +10,7 @@ public class UserResponseDto {
 
     private Long id;
     private String password;
+    private String newPassword;
     private String email;
     private String nickname;
     private LocalDateTime createdAt;
@@ -20,6 +21,7 @@ public class UserResponseDto {
     public UserResponseDto(User user) {
         this.id = user.getId();
         this.password = user.getPassword();
+        this.newPassword = user.getNewPassword();
         this.email = user.getEmail();
         this.nickname = user.getNickname();
         this.createdAt = user.getCreatedAt();

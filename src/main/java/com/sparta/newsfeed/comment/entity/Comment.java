@@ -1,5 +1,7 @@
 package com.sparta.newsfeed.comment.entity;
 
+import com.sparta.newsfeed.user.entity.User;
+import jakarta.persistence.*;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.user.entity.User;
 import jakarta.persistence.*;
@@ -14,10 +16,6 @@ public class Comment extends Timestamped{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String contents;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

@@ -33,6 +33,9 @@ public class User extends TimeStamp {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "newpassword", nullable = false)
+    private String newPassword;
+
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
@@ -58,6 +61,14 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentLikes> commentLikesList = new ArrayList<>();
 
+    // 내가 팔로우한 애들
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Follow> followers = new ArrayList<>();
+    // 니들이 나한테 건 팔로우
+    @OneToMany(mappedBy = "followee", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Follow> followees = new ArrayList<>();
+
+
 
     // 북마크와의 일대다 관계(북마크가 하나의 유저만 참조, 북마크 공유가 제한?)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -68,19 +79,13 @@ public class User extends TimeStamp {
     @OneToOne(mappedBy = "imageUrl")
     private Image image;
 
-    public User(UserRequestDto requestDto){
-
+    public User(UserRequestDto requestDto, String encodedPassword){
+        this.password = encodedPassword;
         this.email = requestDto.getEmail();
-        this.password = requestDto.getPassword();
         this.nickname = requestDto.getNickname();
 
     }
 
-    // 내가 팔로우한 애들
-    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Follow> followers = new ArrayList<>();
-    // 니들이 나한테 건 팔로우
-    @OneToMany(mappedBy = "followee", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Follow> followees = new ArrayList<>();
+
 
 }
