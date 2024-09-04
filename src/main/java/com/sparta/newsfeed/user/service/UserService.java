@@ -86,16 +86,16 @@ public class UserService {
 
 
         // 비밀번호 업데이트
-        // 새로운 비빌번호와 새로운 비밀번호 재확인 .....
+        // 새로운 비빌번호와 새로운 비밀번호 재확인
         if (!requestDto.getNewPassword().equals(requestDto.getNewConfirmPassword())) {
             throw new IllegalArgumentException("새로운 비밀번호가 일치하지 않습니다. ");
         }
 
-        // 비밀번호 형식 검증
-        PasswordUtils.checkPasswordFormat(requestDto.getPassword());
+        // 새로운 비밀번호 형식 검증
+        PasswordUtils.checkPasswordFormat(requestDto.getNewPassword());
 
         // 현재 비밀번호와 새로운 비밀번호가 같은 경우
-        if (!requestDto.getPassword().equals(requestDto.getNewConfirmPassword())) {
+        if (user.getPassword().equals(requestDto.getNewPassword())) {
             throw new IllegalArgumentException("현재 비밀번호와 동일한 비밀번호로 변경할 수 없습니다.");
         }
 

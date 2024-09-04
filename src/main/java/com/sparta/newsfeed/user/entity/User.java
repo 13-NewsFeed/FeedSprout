@@ -29,9 +29,6 @@ public class User extends TimeStamp {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "newpassword", nullable = false)
-    private String newPassword;
-
     @Column(name = "username", nullable = false)
     private String username;
 
