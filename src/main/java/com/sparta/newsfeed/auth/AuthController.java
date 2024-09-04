@@ -2,10 +2,14 @@ package com.sparta.newsfeed.auth;
 
 import com.sparta.newsfeed.auth.dto.LoginRequestDto;
 import com.sparta.newsfeed.auth.dto.LoginResponseDto;
+import com.sparta.newsfeed.user.dto.UserRequestDto;
+import com.sparta.newsfeed.user.dto.UserResponseDto;
+import com.sparta.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +18,19 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService loginService;
+    private final UserService userService;
+
+
+    // 프로필 생성
+    @PostMapping("/register")
+    public ResponseEntity<?> createProfile(@RequestBody UserRequestDto requestDto) {
+
+        // 사용자 서비스 호출 생성
+        UserResponseDto userResponseDto = userService.createProfile(requestDto);
+        // 성공적 생성 -> 201 상태 코드로 생성된 사용자를 반환
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
+
+    }
 
 
     // 로그인

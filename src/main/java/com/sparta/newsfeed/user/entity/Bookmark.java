@@ -1,11 +1,15 @@
 package com.sparta.newsfeed.user.entity;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
+@Entity
 public class Bookmark {
+    @Id
+    @GeneratedValue
+    private Long id;
 
-    @ManyToOne
+
+/*    @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User user;*/
 }
