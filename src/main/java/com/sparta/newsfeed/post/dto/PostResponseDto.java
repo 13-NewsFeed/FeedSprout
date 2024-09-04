@@ -27,6 +27,8 @@ public class PostResponseDto {
         this.userId = userId;
         this.title = title;
         this.contents = content;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
     }
 
     public PostResponseDto(Post post) {

@@ -4,12 +4,17 @@ package com.sparta.newsfeed.post.controller;
 import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
+import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.post.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class PostController {
@@ -17,14 +22,16 @@ public class PostController {
     private PostService postService;
 
     @PostMapping("/posts")      // userId 게시글 작성
-    public ResponseEntity<PostResponseDto> createPost(AuthUser authUser, @RequestBody PostRequestDto dto) {
-        PostResponseDto response = postService.createPost(authUser, dto);
+    public ResponseEntity<PostResponseDto> create(
+            AuthUser authUser, @RequestBody PostRequestDto dto
+    ) {
+        PostResponseDto response = postService.create(authUser, dto);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/posts/{postId}")       // 게시글 단건 조회
     public ResponseEntity<PostResponseDto> getPost(@PathVariable Long postId) {
-        PostResponseDto response = postService.getPost(postId);
+        PostResponseDto response = postService.getpost(postId);
         return ResponseEntity.ok(response);
     }
 
@@ -48,31 +55,42 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/profiles/{userId}/follows/{followerId}/posts")      // 게시글 조회 (팔로우)
-    public ResponseEntity<List<PostResponseDto>> getFollowerPosts(
-            @PathVariable(name = "followerId") Long followerId,
-            @RequestParam(defaultValue = "1", required = false) int pageNo,
-            @RequestParam(defaultValue = "10", required = false) int pageSize
+
+    @GetMapping("/profiles/follows/posts")      // 팔로우 한 사람들 게시글 모두 조회
+    public ResponseEntity<List<PostResponseDto>> getPostsByFollowUsers(
+            AuthUser authUser,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        // 이부분 Service와 함께 작성 필요
-        // List<PostResponseDto> response = postService.getFollowerPosts(followerId, pageNo, pageSize);
-        return ResponseEntity.ok(null);
-    }
-
-
-
-    @PutMapping("/posts/{postId}")      // 게시글 수정
-    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long postId, @RequestBody PostRequestDto dto) {
-        PostResponseDto response = postService.updatePost(postId, dto);
+        List<PostResponseDto> response = postService.getPostsByFollowedUsers(authUser, page, size);
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/posts/{postId}")       // 게시글 삭제
-    public ResponseEntity<PostResponseDto> deletePost(@PathVariable Long postId) {
-        PostResponseDto responseDto = postService.deletePost(postId);
-        return ResponseEntity.ok(responseDto);
+
+    @GetMapping("profiles/follows/{followeeId}/posts")      // 팔로우 한 사람 한명 게시글 모두 조회
+    public ResponseEntity<List<PostResponseDto>> getPostsByFollowedUser(
+            AuthUser authUser,
+            @PathVariable Long followeeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<PostResponseDto> response = postService.getPostsByFollowedUser(authUser, followeeId, page, size);
+        return ResponseEntity.ok(response);
     }
 
+
+    @PutMapping("/posts/{postId}")      // 게시글 수정
+    public ResponseEntity<PostResponseDto> update(@PathVariable Long postId, @RequestBody PostRequestDto dto) {
+        PostResponseDto response = postService.update(postId, dto);
+        return ResponseEntity.ok(response);
+    }
+
+
+    @DeleteMapping("/posts/{postId}")       // 게시글 삭제
+    public ResponseEntity<PostResponseDto> delete(@PathVariable Long postId) {
+        PostResponseDto responseDto = postService.delete(postId);
+        return ResponseEntity.ok(responseDto);
+    }
 
 }
 

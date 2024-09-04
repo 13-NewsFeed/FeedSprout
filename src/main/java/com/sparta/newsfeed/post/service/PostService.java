@@ -5,8 +5,10 @@ import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
+import com.sparta.newsfeed.user.entity.Follow;
 import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.post.repository.PostRepository;
+import com.sparta.newsfeed.user.repository.FollowRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -24,9 +28,12 @@ public class PostService {
     private PostRepository postRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private FollowRepository followRepository;
+
 
     @Transactional
-    public PostResponseDto createPost(AuthUser authUser, PostRequestDto dto) {
+    public PostResponseDto create(AuthUser authUser, PostRequestDto dto) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
                 new IllegalArgumentException("대상 유저가 없습니다."));
         Post post = Post.createPost(dto, user);
@@ -43,7 +50,7 @@ public class PostService {
 
     }
 
-    public PostResponseDto getPost(Long postId) {
+    public PostResponseDto getpost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         PostResponseDto responseDto = new PostResponseDto(
                 post.getId(),
@@ -74,8 +81,41 @@ public class PostService {
                 .toList();
     }
 
+    public List<PostResponseDto> getPostsByFollowedUsers(AuthUser authUser, int page, int size) {
+        // 팔로우 목록 가져오기
+        List<Long> followedUserIds = followRepository.findFolloweeIdsByFollowerId(authUser.getId());
+
+        // 페이지 요청 설정
+        PageRequest pageRequest = PageRequest.of(page-1, size);
+
+        // 팔로우한 사용자들의 게시물 가져오기
+        Page<Post> postPage = postRepository.findByUserIdIn(followedUserIds, pageRequest);
+
+        // 게시물을 DTO로 변환
+        return postPage.stream()
+                .map(PostResponseDto::new)
+                .toList();
+    }
+
+    public List<PostResponseDto> getPostsByFollowedUser(AuthUser authUser, Long followeeId, int page, int size) {
+        // 팔로우 관계 확인
+        boolean isFollowing = followRepository.existsByFollowerIdAndFolloweeId(authUser.getId(), followeeId);
+        if (!isFollowing) {
+            throw new IllegalArgumentException("User is not following the specified followee.");
+        }
+        // followeeId 유저의 게시글 조회
+        Pageable pageable = PageRequest.of(page-1, size);
+        Page<Post> postPage = postRepository.findByUserId(followeeId, pageable);
+
+        // 게시물을 DTO로 변환
+        return postPage.stream()
+                .map(PostResponseDto::new)
+                .toList();
+    }
+
+
     @Transactional
-    public PostResponseDto updatePost(Long postId, PostRequestDto dto) {
+    public PostResponseDto update(Long postId, PostRequestDto dto) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         post.update(
                 dto.getTitle(),
@@ -94,7 +134,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto deletePost(Long postId) {
+    public PostResponseDto delete(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         postRepository.delete(post);
         return new PostResponseDto(
@@ -105,5 +145,9 @@ public class PostService {
                 post.getCreatedAt(),
                 post.getModifiedAt()
         );
+
     }
+
+
 }
+
