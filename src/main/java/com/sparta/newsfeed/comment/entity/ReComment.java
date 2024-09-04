@@ -21,9 +21,9 @@ public class ReComment extends Timestamped{
     @JoinColumn(name = "user_id")
     private User user;
 
-    public ReComment(String contents, Comment comment, User user) {
+    public ReComment(User user, String contents, Comment comment) {
+        this.user = user;
         this.contents = contents;
         this.comment = comment;
-        this.user = user;
     }
 }
