@@ -8,6 +8,7 @@ import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.user.entity.Follow;
 import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.post.repository.PostRepository;
+import com.sparta.newsfeed.user.repository.FollowRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class PostService {
     private PostRepository postRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private FollowRepository followRepository;
 
 
     @Transactional
@@ -78,28 +81,38 @@ public class PostService {
                 .toList();
     }
 
-    public List<PostResponseDto> getPostsByFollowedUsers(Long userId, int page, int size) {
+    public List<PostResponseDto> getPostsByFollowedUsers(AuthUser authUser, int page, int size) {
         // 팔로우 목록 가져오기
-        List<Long> followedUserIds = userRepository.findFollowedUserIdsByUserId(userId);
+        List<Long> followedUserIds = followRepository.findFolloweeIdsByFollowerId(authUser.getId());
 
         // 페이지 요청 설정
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page-1, size);
 
         // 팔로우한 사용자들의 게시물 가져오기
-        Page<Post> postsPage = postRepository.findByUserIdIn(followedUserIds, pageRequest);
+        Page<Post> postPage = postRepository.findByUserIdIn(followedUserIds, pageRequest);
 
         // 게시물을 DTO로 변환
-        return postsPage.stream()
-                .map(post -> new PostResponseDto(
-                        post.getId(),
-                        post.getUser().getId(),
-                        post.getTitle(),
-                        post.getContents(),
-                        post.getCreatedAt(),
-                        post.getModifiedAt())
-                )
-                .collect(Collectors.toList());
+        return postPage.stream()
+                .map(PostResponseDto::new)
+                .toList();
     }
+
+    public List<PostResponseDto> getPostsByFollowedUser(AuthUser authUser, Long followeeId, int page, int size) {
+        // 팔로우 관계 확인
+        boolean isFollowing = followRepository.existsByFollowerIdAndFolloweeId(authUser.getId(), followeeId);
+        if (!isFollowing) {
+            throw new IllegalArgumentException("User is not following the specified followee.");
+        }
+        // followeeId 유저의 게시글 조회
+        Pageable pageable = PageRequest.of(page-1, size);
+        Page<Post> postPage = postRepository.findByUserId(followeeId, pageable);
+
+        // 게시물을 DTO로 변환
+        return postPage.stream()
+                .map(PostResponseDto::new)
+                .toList();
+    }
+
 
     @Transactional
     public PostResponseDto update(Long postId, PostRequestDto dto) {
@@ -137,3 +150,4 @@ public class PostService {
 
 
 }
+

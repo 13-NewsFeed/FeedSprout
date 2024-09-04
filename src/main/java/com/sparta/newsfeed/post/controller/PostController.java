@@ -55,17 +55,28 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/profiles/{userId}/follows/posts")
+
+    @GetMapping("/profiles/follows/posts")      // 팔로우 한 사람들 게시글 모두 조회
     public ResponseEntity<List<PostResponseDto>> getPostsByFollowUsers(
-            @PathVariable Long userId,
+            AuthUser authUser,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-
-        List<PostResponseDto> posts = postService.getPostsByFollowedUsers(userId, page, size);
-        return ResponseEntity.ok(posts);
-
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<PostResponseDto> response = postService.getPostsByFollowedUsers(authUser, page, size);
+        return ResponseEntity.ok(response);
     }
 
+
+    @GetMapping("profiles/follows/{followeeId}/posts")      // 팔로우 한 사람 한명 게시글 모두 조회
+    public ResponseEntity<List<PostResponseDto>> getPostsByFollowedUser(
+            AuthUser authUser,
+            @PathVariable Long followeeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<PostResponseDto> response = postService.getPostsByFollowedUser(authUser, followeeId, page, size);
+        return ResponseEntity.ok(response);
+    }
 
 
     @PutMapping("/posts/{postId}")      // 게시글 수정
@@ -73,6 +84,7 @@ public class PostController {
         PostResponseDto response = postService.update(postId, dto);
         return ResponseEntity.ok(response);
     }
+
 
     @DeleteMapping("/posts/{postId}")       // 게시글 삭제
     public ResponseEntity<PostResponseDto> delete(@PathVariable Long postId) {
