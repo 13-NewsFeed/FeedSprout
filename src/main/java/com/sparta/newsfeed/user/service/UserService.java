@@ -1,11 +1,9 @@
 package com.sparta.newsfeed.user.service;
 
+import com.sparta.newsfeed.config.UserPasswordEncoder;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
-import com.sparta.newsfeed.user.entity.Follow;
-import com.sparta.newsfeed.user.entity.FollowState;
 import com.sparta.newsfeed.user.entity.User;
-import com.sparta.newsfeed.user.repository.FollowRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import com.sparta.newsfeed.user.util.PasswordUtils;
 import jakarta.transaction.Transactional;
@@ -22,7 +20,7 @@ public class UserService {
     // 프로필 생성
     @Transactional
     public UserResponseDto createProfile(UserRequestDto requestDto) {
-        if (requestDto.getEmail() == null || requestDto.getNickname() == null) {
+        if (requestDto.getEmail() == null || requestDto.getUsername() == null) {
             throw new IllegalArgumentException("Email과 nickname은 필수입니다.");
         }
         // 이메일 중복 체크.
@@ -65,8 +63,8 @@ public class UserService {
         }
 
         // 닉네임 업데이트
-        if (requestDto.getNickname() != null) {
-            user.setNickname(requestDto.getNickname());
+        if (requestDto.getUsername() != null) {
+            user.setUsername(requestDto.getUsername());
         }
 
         // 이메일 업데이트

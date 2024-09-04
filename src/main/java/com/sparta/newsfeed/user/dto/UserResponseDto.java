@@ -12,7 +12,7 @@ public class UserResponseDto {
     private String password;
     private String newPassword;
     private String email;
-    private String nickname;
+    private String username;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private String role;
@@ -23,7 +23,7 @@ public class UserResponseDto {
         this.password = user.getPassword();
         this.newPassword = user.getNewPassword();
         this.email = user.getEmail();
-        this.nickname = user.getNickname();
+        this.username = user.getUsername();
         this.createdAt = user.getCreatedAt();
         this.modifiedAt = user.getModifiedAt();
 

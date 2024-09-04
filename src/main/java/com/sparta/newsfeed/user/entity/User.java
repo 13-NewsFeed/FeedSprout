@@ -10,16 +10,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "user")
+@Table(name = "users")
 @NoArgsConstructor
 public class User extends TimeStamp {
 
@@ -36,8 +33,8 @@ public class User extends TimeStamp {
     @Column(name = "newpassword", nullable = false)
     private String newPassword;
 
-    @Column(name = "nickname", nullable = false)
-    private String nickname;
+    @Column(name = "username", nullable = false)
+    private String username;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes;
@@ -52,14 +49,18 @@ public class User extends TimeStamp {
     private List<Comment> commentList = new ArrayList<>();
 
 
-    // 게시글 좋아요와의 일대다 관계
+/*    // 북마크와의 일대다 관계(북마크가 하나의 유저만 참조, 북마크 공유가 제한?)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostLikes> postLikesjList = new ArrayList<>();
+    private List<Bookmark> bookmarkList = new ArrayList<>();
 
+    // 이미지와의 일대일 양방향 관계
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Image image;*/
 
-    // 댓글 좋아요와의 일대다 관계
+    // 좋아요와의 일대다 관계
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommentLikes> commentLikesList = new ArrayList<>();
+    private List<Like> Like = new ArrayList<>();
+
 
     // 내가 팔로우한 애들
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -69,23 +70,10 @@ public class User extends TimeStamp {
     List<Follow> followees = new ArrayList<>();
 
 
-
-    // 북마크와의 일대다 관계(북마크가 하나의 유저만 참조, 북마크 공유가 제한?)
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Bookmark> bookmarkList = new ArrayList<>();
-
-
-    // 이미지와의 일대일 단방향 관계
-    @OneToOne(mappedBy = "imageUrl")
-    private Image image;
-
     public User(UserRequestDto requestDto, String encodedPassword){
         this.password = encodedPassword;
         this.email = requestDto.getEmail();
-        this.nickname = requestDto.getNickname();
+        this.username = requestDto.getUsername();
 
     }
-
-
-
 }

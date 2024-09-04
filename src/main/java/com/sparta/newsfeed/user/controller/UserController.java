@@ -20,14 +20,13 @@ public class UserController {
 
     private final UserService userService;
     private final UserFeatureService userFeatureService;
-
     public UserController(UserService userService, UserFeatureService userFeatureService){
         this.userService = userService;
         this.userFeatureService = userFeatureService;
     }
 
     // 프로필 생성
-    @PostMapping("/profiles/")
+    @PostMapping("/users/")
     public ResponseEntity<?> createProfile(@RequestBody UserRequestDto requestDto) {
         try{
             // 사용자 서비스 호출 생성
@@ -45,7 +44,7 @@ public class UserController {
 
 
     // 프로필 조회
-    @GetMapping("/profiles/{id}")
+    @GetMapping("/users/{id}")
     public ResponseEntity<UserResponseDto> getProfileById(@PathVariable Long id) {
         try {
             UserResponseDto userResponseDto = userService.getProfileById(id);
@@ -63,7 +62,7 @@ public class UserController {
 
 
     // 프로필 수정
-    @PutMapping("/profiles/{id}")
+    @PutMapping("/users/{id}")
     public ResponseEntity<UserResponseDto> updateProfile(@PathVariable Long id
             , @RequestBody UserRequestDto requestDto){
 
@@ -80,11 +79,41 @@ public class UserController {
         }
     }
 
-    @PostMapping("/profiles/{id}/follows")
-    public ResponseEntity<?> followUser(@RequestParam(value = "from") Long from,
-                                        @RequestParam(value = "to") Long to) {
-        FollowResponseDto followResponseDto = userFeatureService.followUser(from, to);
+
+    @PostMapping("/users/{id}/follows")
+    public ResponseEntity<FollowResponseDto> followUser(@RequestParam(value = "from") Long fromId,
+                                        @RequestParam(value = "to") Long toId) {
+        FollowResponseDto followResponseDto = userFeatureService.followUser(fromId, toId);
 
         return ResponseEntity.ok().body(followResponseDto);
+    }
+
+    // 나한테 팔로우 건 애들 가져오기
+    @GetMapping("/{id}/followers")
+    public ResponseEntity<List<String>> getFollowers(@PathVariable Long id){
+        List<String> followers = userFeatureService.getFollowers(id);
+        return ResponseEntity.ok(followers);
+    }
+
+    // 내가 팔로우 건 애들 가져오기
+    @GetMapping("/{id}/followees")
+    public ResponseEntity<List<String>> getFollowees(@PathVariable Long id) {
+        List<String> followees = userFeatureService.getFollowees(id);
+        return ResponseEntity.ok(followees);
+    }
+
+    // 팔로우 대기목록 확인
+    @GetMapping("/{id}/waiting-followers")
+    public ResponseEntity<List<String>> getWaitingFollowers(@PathVariable Long id){
+        List<String> waitingFollowers = userFeatureService.getWaitingFollowers(id);
+        return ResponseEntity.ok(waitingFollowers);
+    }
+
+    // 팔로우 승낙 혹은 거절하기
+    @PostMapping("/update")
+    public ResponseEntity<Void> updateFollowState(
+            @RequestParam Long followerId, @RequestParam Long followeeId, @RequestParam String state) {
+        userFeatureService.updateFollowState(followerId, followeeId, state);
+        return ResponseEntity.ok().build();
     }
 }
