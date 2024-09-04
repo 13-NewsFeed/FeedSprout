@@ -31,7 +31,6 @@ public class Like {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-
     public Like(User user, Post post, Comment comment){
        this.user = user;
        this.post = post;
