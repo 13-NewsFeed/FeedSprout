@@ -9,14 +9,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-
-@RequestMapping("/likes/{userId}")
 public class LikeController {
     private final LikeService likeService;
     //게시글 좋아요
-    @PostMapping("/posts/{postId}")
+    @PostMapping("/posts/{postId}/likes")
     public ResponseEntity<LikeResponseDto> postLike(
-            @PathVariable Long userId , @PathVariable Long postId){
+            @PathVariable(name = "postId") Long postId, Long userId){
 
         LikeResponseDto response= likeService.postLike(userId,postId);
 
@@ -25,9 +23,9 @@ public class LikeController {
     //HTTP 상태 코드 제어:
     // ResponseEntity를 사용하면 응답에 대한 HTTP 상태 코드를 명시적으로 지정할 수 있습니다.
     //상태 코드를 넣어야 되나?
-    @PostMapping("/posts/{postId}/comments/{commentId}")
+    @PostMapping("/posts/{postId}/comments/{commentId}/likes")
     public  ResponseEntity<LikeResponseDto> commentLike
-            (@PathVariable Long userId, @PathVariable Long postId, @PathVariable Long commentId){
+            (@PathVariable(name = "postId") Long postId, @PathVariable(name = "commentId") Long commentId, Long userId){
 
         LikeResponseDto response = likeService.commentLike(userId,commentId);
 

@@ -30,9 +30,11 @@ public class CommentService {
     // 댓글 생성 요청을 받아 저장
     @Transactional
     public CommentSaveResponseDto saveComment(Long postId, AuthUser authUser, CommentSaveRequestDto commentSaveRequestDto) {
+
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new RuntimeException("Post not found")
         );
+
         User user = userRepository.findById(authUser.getId()).orElseThrow(
                 () -> new RuntimeException("User not found")
         );

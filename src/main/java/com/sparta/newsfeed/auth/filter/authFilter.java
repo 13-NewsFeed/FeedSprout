@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @Order(2)
@@ -42,7 +43,6 @@ public class authFilter implements Filter {
         String requestURI = httpServletRequest.getRequestURI();
 
         String a = httpServletRequest.getHeader("Authorization");
-        log.info(a);
 
         if(StringUtils.hasText(requestURI) && (requestURI.startsWith("/auth/"))) {
 
@@ -60,6 +60,8 @@ public class authFilter implements Filter {
 
                 // 토큰에서 사용자 정보 가져오기
                 Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+
+                request.setAttribute("userId", info.get("userId"));
 
                 customHandleRequest(requestURI, method, info);
 
@@ -85,7 +87,7 @@ public class authFilter implements Filter {
     private AuthorizationStrategy handlerRequest(String requestURI) throws ServletException, IOException {
         AuthorizationStrategy authStrategy = null;
 
-        String start = requestURI.split("/")[1];
+        /*String start = requestURI.split("/")[1];
         switch (start) {
             case "posts": {
                 authStrategy = new PostAuthorization(postRepository);
@@ -102,11 +104,30 @@ public class authFilter implements Filter {
             default: {
                 throw new IllegalArgumentException("not found");
             }
+        }*/
+
+        if (requestURI.matches("^/posts/\\d+/comments/\\d+$")) {
+            // "/posts/{postId}/comments/{commentId}" 패턴에 매칭
+            authStrategy = new CommentAuthorization(commentRepository);
+
+        } else if (requestURI.matches("^/posts/\\d+$")) {
+            // "/posts/{postId}" 패턴에 매칭
+            authStrategy = new PostAuthorization(postRepository);
+
+        } else if (requestURI.matches("^/profiles/\\d*$")) {
+            // "/profiles/{userId}" 패턴에 매칭
+            authStrategy = new ProfileAuthorization(userRepository);
+
+        } else {
+            throw new IllegalArgumentException("Resource not found");
         }
+
         return authStrategy;
     }
 
     private Long extractResourceId(String requestURI) {
-        return Long.valueOf(requestURI.split("/")[2]);
+        String[] splits = requestURI.split("/");
+        String resourceId = splits[splits.length-1];
+        return Long.valueOf(resourceId);
     }
 }

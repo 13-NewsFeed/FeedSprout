@@ -1,4 +1,4 @@
-package com.sparta.newsfeed.auth.config;
+package com.sparta.newsfeed.config;
 
 import com.sparta.newsfeed.auth.dto.AuthUser;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,9 +24,8 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
             @Nullable WebDataBinderFactory binderFactory
     ) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-
         // JwtFilter 에서 set 한 userId, email 값을 가져옴
-        Long userId = (Long) request.getAttribute("userId");
+        Long userId = Long.valueOf(String.valueOf(request.getAttribute("userId")));
 
         return new AuthUser(userId);
     }
