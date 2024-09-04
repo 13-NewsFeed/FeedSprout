@@ -1,5 +1,7 @@
 package com.sparta.newsfeed.user.controller;
 
+import com.sparta.newsfeed.config.exception.CustomException;
+import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.user.dto.FollowResponseDto;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
@@ -35,11 +37,12 @@ public class UserController {
             // 성공적 생성 -> 201 상태 코드로 생성된 사용자를 반환
             return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
         } catch(IllegalArgumentException ex){
-            // 잘못된 요청 데이터 : 404 코드로 에러 메세지 반환 (문자열로 반환)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            // 잘못된 요청 데이터 : 400 코드로 에러 메세지 반환 (문자열로 반환)
+            // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            throw new CustomException(ErrorCode.BAD_REQUEST);
         } catch(Exception ex){
             // 서버 오류 : 500 코드로 에러 메세지 반환 (문자열로 반환)
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("is server error");
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
