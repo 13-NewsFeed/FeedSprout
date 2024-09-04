@@ -1,0 +1,21 @@
+/profiles/{userId} -> profile 조회 수정
+/profiles/{userId}/follows -> follow 등록
+
+
+
+/posts/{postId}/likes -> post의 like 등록
+/posts/{postId}/comments/{commentsId}/likes -> comment의 like 등록
+
+/posts -> post 등록
+/posts/{postId} -> post 단건조회 수정 삭제
+/posts/edited-date -> post 전체조회 수정일자 순
+/posts/like -> post 전체조회 좋아요 순
+
+/profiles/{userId}/follows/{followerId}/posts -> 팔로우 post 조회
+-> @PathVariable(name = "followerId") Long id
+
+/posts/{postId}/comments -> 댓글 생성 조회
+/posts/{postId}/comments/{commentId} -> 댓글 수정 삭제
+
+/auth/register -> 회원가입
+/auth/login -> 로그인

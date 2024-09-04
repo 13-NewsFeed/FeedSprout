@@ -29,8 +29,11 @@ public class User extends TimeStamp {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "nickname", nullable = false)
-    private String nickname;
+    @Column(name = "newpassword", nullable = false)
+    private String newPassword;
+
+    @Column(name = "username", nullable = false)
+    private String username;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes;
@@ -68,7 +71,7 @@ public class User extends TimeStamp {
 
         this.email = requestDto.getEmail();
         this.password = requestDto.getPassword();
-        this.nickname = requestDto.getNickname();
+        this.username = requestDto.getUsername();
 
     }
 

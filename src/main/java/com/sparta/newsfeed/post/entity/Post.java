@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.post.entity;
 
 
+import com.sparta.newsfeed.comment.entity.Comment;
 import com.sparta.newsfeed.like.entity.Like;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.user.entity.User;
@@ -17,11 +18,15 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class Post extends Timestamped {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String contents;
+
+    @OneToMany(mappedBy = "post") // cascade 설정
+    private List<Comment> commentList = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")

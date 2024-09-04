@@ -12,7 +12,7 @@ public class FollowResponseDto {
 
     public FollowResponseDto(Follow follow) {
         this.followId = follow.getId();
-        this.followerName = follow.getFollower().getNickname();
-        this.followeeName = follow.getFollowee().getNickname();
+        this.followerName = follow.getFollower().getUsername();
+        this.followeeName = follow.getFollowee().getUsername();
     }
 }

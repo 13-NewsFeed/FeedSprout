@@ -11,22 +11,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/posts/{postId}")
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
 
     // 댓글 생성
-    @PostMapping("/posts/{post-id}/comments")
+    @PostMapping("/comments")
     public ResponseEntity<CommentSaveResponseDto> addComment(
-            @PathVariable(name = "post-id") Long postId, AuthUser authUser, @RequestBody CommentSaveRequestDto commentSaveRequestDto
+            @PathVariable(name = "postId") Long postId, AuthUser authUser, @RequestBody CommentSaveRequestDto commentSaveRequestDto
     ) {
         return ResponseEntity.ok(commentService.saveComment(postId, authUser, commentSaveRequestDto));
     }
 
     // 댓글 조회(전체)
-    @GetMapping("/posts/{post-id}/comments")
+    @GetMapping("/comments")
     public ResponseEntity<Page<CommentGetAllResponseDto>> getAllComments(
-            @PathVariable(name = "post-id") Long postId,
+            @PathVariable(name = "postId") Long postId,
             AuthUser authUser,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size
@@ -35,16 +36,16 @@ public class CommentController {
     }
 
     // 댓글 수정
-    @PutMapping("/posts/comments/{comment-id}")
+    @PutMapping("/comments/{commentId}")
     public ResponseEntity<CommentUpdateResponseDto> updateComment(
-            @PathVariable(name = "comment-id") Long commentId, AuthUser authUser,@RequestBody CommentUpdateRequestDto commentUpdateRequestDto
+            @PathVariable(name = "commentId") Long commentId, AuthUser authUser,@RequestBody CommentUpdateRequestDto commentUpdateRequestDto
     ){
         return ResponseEntity.ok(commentService.updateComment(commentId, authUser, commentUpdateRequestDto));
     }
 
     // 댓글 삭제
-    @DeleteMapping("/posts/comments/{comment-id}")
-    public void deleteComment(@PathVariable(name = "comment-id") Long commentId){
+    @DeleteMapping("/comments/{commentId}")
+    public void deleteComment(@PathVariable(name = "commentId") Long commentId){
         commentService.deleteComment(commentId);
     }
 

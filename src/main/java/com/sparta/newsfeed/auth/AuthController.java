@@ -4,6 +4,8 @@ import com.sparta.newsfeed.auth.dto.LoginRequestDto;
 import com.sparta.newsfeed.auth.dto.LoginResponseDto;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
+import com.sparta.newsfeed.user.entity.User;
+import com.sparta.newsfeed.user.repository.UserRepository;
 import com.sparta.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -19,18 +21,20 @@ public class AuthController {
 
     private final AuthService loginService;
     private final UserService userService;
+    private final AuthService authService;
+    private final UserRepository userRepository;
 
 
-    // 프로필 생성
+/*    // 프로필 생성
     @PostMapping("/register")
-    public ResponseEntity<?> createProfile(@RequestBody UserRequestDto requestDto) {
+    public ResponseEntity<?> register(@RequestBody UserRequestDto requestDto) {
 
         // 사용자 서비스 호출 생성
-        UserResponseDto userResponseDto = userService.createProfile(requestDto);
+        UserResponseDto userResponseDto = authService.register(requestDto);
         // 성공적 생성 -> 201 상태 코드로 생성된 사용자를 반환
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
 
-    }
+    }*/
 
 
     // 로그인
@@ -52,13 +56,9 @@ public class AuthController {
         }
     }
 
-    /*// 로그아웃, BlackList
-    public ResponseEntity<?> logout() {
+    // 로그아웃
+    /*public ResponseEntity<?> logout() {
 
-        try {
-
-        } catch (Exception e) {
-            return ResponseEntity.status()
-        }
     }*/
+
 }

@@ -5,8 +5,6 @@ import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.user.dto.FollowResponseDto;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
-import com.sparta.newsfeed.user.entity.Follow;
-import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.user.service.UserFeatureService;
 import com.sparta.newsfeed.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -32,28 +30,25 @@ public class UserController {
         this.userFeatureService = userFeatureService;
     }
 
-    // 프로필 생성
-    @PostMapping("/profiles/")
-    public ResponseEntity<?> createProfile(@RequestBody UserRequestDto requestDto, BindingResult bindingResult) {
-
-        // 사용자 서비스 호출 생성
-        UserResponseDto userResponseDto = userService.createProfile(requestDto);
-        // 성공적 생성 -> 201 상태 코드로 생성된 사용자를 반환
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
-
-    }
-
 
     // 프로필 조회
     @GetMapping("/profiles/{id}")
-    public ResponseEntity<UserResponseDto> getProfileById(@PathVariable Long id) {
-
+    public ResponseEntity<UserResponseDto> getProfileById(@PathVariable Long id) throws CustomException {
         UserResponseDto userResponseDto = userService.getProfileById(id);
         // 성공적 조회 : 200 상태 코드로 조회된 사용자 정보를 반환
         return ResponseEntity.ok(userResponseDto);
-
     }
 
+    // 회원 탈퇴
+    @DeleteMapping("/profiles/{userId}")
+    public ResponseEntity<String> deleteProfile(@PathVariable Long userId) {
+        try {
+            userService.deleteProfile(userId);
+            return ResponseEntity.ok().body("Withdraw Success");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred during login");
+        }
+    }
 
 
     // 프로필 수정
@@ -74,11 +69,53 @@ public class UserController {
         }
     }
 
+    // 팔로우 걸기
     @PostMapping("/profiles/{id}/follows")
-    public ResponseEntity<?> followUser(@RequestParam(value = "from") Long from,
+    public ResponseEntity<FollowResponseDto> followUser(@RequestParam(value = "from") Long from,
                                         @RequestParam(value = "to") Long to) {
         FollowResponseDto followResponseDto = userFeatureService.followUser(from, to);
 
         return ResponseEntity.ok().body(followResponseDto);
+    }
+
+    // 팔로워 삭제
+    @DeleteMapping("/delete/{id}/follows")
+    public ResponseEntity<String> deleteFollower(@RequestParam Long followerId, @RequestParam Long followeeId) {
+        try {
+            userFeatureService.deleteFollower(followerId, followeeId);
+            return ResponseEntity.ok("팔로워가 성공적으로 삭제되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+    // 나한테 팔로우 건 애들 가져오기
+    @GetMapping("/{id}/followers")
+    public ResponseEntity<List<String>> getFollowers(@PathVariable Long id){
+        List<String> followers = userFeatureService.getFollowers(id);
+        return ResponseEntity.ok(followers);
+    }
+
+    // 내가 팔로우 건 애들 가져오기
+    @GetMapping("/{id}/followees")
+    public ResponseEntity<List<String>> getFollowees(@PathVariable Long id) {
+        List<String> followees = userFeatureService.getFollowees(id);
+        return ResponseEntity.ok(followees);
+    }
+
+    // 팔로우 대기목록 확인
+    @GetMapping("/{id}/waiting-followers")
+    public ResponseEntity<List<String>> getWaitingFollowers(@PathVariable Long id){
+        List<String> waitingFollowers = userFeatureService.getWaitingFollowers(id);
+        return ResponseEntity.ok(waitingFollowers);
+    }
+
+    // 팔로우 승낙 혹은 거절하기
+    @PostMapping("/update")
+    public ResponseEntity<Void> updateFollowState(
+            @RequestParam Long followerId, @RequestParam Long followeeId, @RequestParam String state) {
+        userFeatureService.updateFollowState(followerId, followeeId, state);
+        return ResponseEntity.ok().build();
     }
 }

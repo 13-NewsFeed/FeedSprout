@@ -30,9 +30,11 @@ public class CommentService {
     // 댓글 생성 요청을 받아 저장
     @Transactional
     public CommentSaveResponseDto saveComment(Long postId, AuthUser authUser, CommentSaveRequestDto commentSaveRequestDto) {
+
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new RuntimeException("Post not found")
         );
+
         User user = userRepository.findById(authUser.getId()).orElseThrow(
                 () -> new RuntimeException("User not found")
         );
@@ -77,7 +79,7 @@ public class CommentService {
                 comment.getCreatedAt(),
                 comment.getModifiedAt()
         ));
-      
+
     }
 
     // 특정 댓글 내용 수정
@@ -87,11 +89,9 @@ public class CommentService {
                 () -> new RuntimeException("Comment not found")
         );
         comment.update(commentUpdateRequestDto.getContents());
-
         return new CommentUpdateResponseDto(
                 commentId,
                 comment.getContents(),
-                comment.getPost(),
                 authUser.getId(),
                 comment.getCreatedAt(),
                 comment.getModifiedAt()

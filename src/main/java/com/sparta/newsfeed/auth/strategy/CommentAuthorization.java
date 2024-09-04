@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.auth.strategy;
 
+import com.sparta.newsfeed.comment.entity.Comment;
 import com.sparta.newsfeed.comment.repository.CommentRepository;
 import com.sparta.newsfeed.user.entity.User;
 import io.jsonwebtoken.Claims;
@@ -17,7 +18,8 @@ public class CommentAuthorization implements AuthorizationStrategy {
     // 해당 Claims에서 사용자 정보를 가져오고, 입력받은 Id를 이용하여 사용자를 가져와서 이 둘이 일치하는지 비교
     @Override
     public boolean isAuthorized(Claims info, Long commentId) throws ServletException, IOException {
-        User user = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException()).getUser();
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException());
+        User user = comment.getUser();
         return user.getEmail().equals(info.getSubject());
     }
 }
