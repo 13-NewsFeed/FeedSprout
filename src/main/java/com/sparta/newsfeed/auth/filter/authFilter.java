@@ -14,8 +14,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.io.IOException;
 
 @Slf4j
@@ -74,7 +79,7 @@ public class authFilter implements Filter {
             Long id = extractResourceId(requestURI);
             boolean result = handlerRequest(requestURI).isAuthorized(info, id);
             if (!result) {
-                throw new IllegalArgumentException("Unauthorized");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             }
         }
     }
