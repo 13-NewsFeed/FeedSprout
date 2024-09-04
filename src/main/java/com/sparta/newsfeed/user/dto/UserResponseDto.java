@@ -15,7 +15,6 @@ public class UserResponseDto {
     private String username;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    private String role;
 
 
     public UserResponseDto(User user) {

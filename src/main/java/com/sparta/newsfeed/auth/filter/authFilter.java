@@ -15,13 +15,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @Order(2)
@@ -44,7 +43,6 @@ public class authFilter implements Filter {
         String requestURI = httpServletRequest.getRequestURI();
 
         String a = httpServletRequest.getHeader("Authorization");
-        log.info(a);
 
         if(StringUtils.hasText(requestURI) && (requestURI.startsWith("/auth/"))) {
 
@@ -57,11 +55,13 @@ public class authFilter implements Filter {
 
                 // 토큰 검증
                 if (!jwtUtil.validateToken(tokenValue)) {
-                    throw new IllegalArgumentException("Token Error");
+                    throw new IllegalArgumentException("Invalid Token");
                 }
 
                 // 토큰에서 사용자 정보 가져오기
                 Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+
+                request.setAttribute("userId", info.get("userId"));
 
                 customHandleRequest(requestURI, method, info);
 
@@ -87,28 +87,47 @@ public class authFilter implements Filter {
     private AuthorizationStrategy handlerRequest(String requestURI) throws ServletException, IOException {
         AuthorizationStrategy authStrategy = null;
 
-        String start = requestURI.split("/")[1];
+        /*String start = requestURI.split("/")[1];
         switch (start) {
-            case "post": {
+            case "posts": {
                 authStrategy = new PostAuthorization(postRepository);
                 break;
             }
-            case "comment": {
+            case "comments": {
                 authStrategy = new CommentAuthorization(commentRepository);
                 break;
             }
-            case "profile": {
+            case "profiles": {
                 authStrategy = new ProfileAuthorization(userRepository);
                 break;
             }
             default: {
                 throw new IllegalArgumentException("not found");
             }
+        }*/
+
+        if (requestURI.matches("^/posts/\\d+/comments/\\d+$")) {
+            // "/posts/{postId}/comments/{commentId}" 패턴에 매칭
+            authStrategy = new CommentAuthorization(commentRepository);
+
+        } else if (requestURI.matches("^/posts/\\d+$")) {
+            // "/posts/{postId}" 패턴에 매칭
+            authStrategy = new PostAuthorization(postRepository);
+
+        } else if (requestURI.matches("^/profiles/\\d*$")) {
+            // "/profiles/{userId}" 패턴에 매칭
+            authStrategy = new ProfileAuthorization(userRepository);
+
+        } else {
+            throw new IllegalArgumentException("Resource not found");
         }
+
         return authStrategy;
     }
 
     private Long extractResourceId(String requestURI) {
-        return Long.valueOf(requestURI.split("/")[2]);
+        String[] splits = requestURI.split("/");
+        String resourceId = splits[splits.length-1];
+        return Long.valueOf(resourceId);
     }
 }

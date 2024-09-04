@@ -15,7 +15,7 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @PostMapping("/posts/{userId}")      // userId 게시글 작성
+    @PostMapping("/posts")      // userId 게시글 작성
     public ResponseEntity<PostResponseDto> create(@PathVariable Long userId, @RequestBody PostRequestDto dto) {
         PostResponseDto response = postService.create(userId, dto);
         return ResponseEntity.ok(response);
@@ -27,7 +27,7 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/posts/edited-date/{userId}")       // 게시글 조회 (수정일자 내림차순)
+    @GetMapping("/posts/editedDate")       // 게시글 조회 (수정일자 내림차순)
     public ResponseEntity<List<PostResponseDto>> getPostsByTime(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "1", required = false) int pageNo,
@@ -37,7 +37,7 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/posts/likes/{userId}")       // 게시글 조회 (좋아요 많은순 내림차순)
+    @GetMapping("/posts/likes")       // 게시글 조회 (좋아요 많은순 내림차순)
     public ResponseEntity<List<PostResponseDto>> getPostsByLikes(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "1", required = false) int pageNo,
@@ -47,11 +47,17 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-//    @GetMapping("/profiles/{id}/follows/posts")      // 게시글 조회 (팔로우)
+    @GetMapping("/profiles/{userId}/follows/{followerId}/posts")      // 게시글 조회 (팔로우)
+    public ResponseEntity<List<PostResponseDto>> getFollowerPosts(
+            @PathVariable(name = "followerId") Long followerId,
+            @RequestParam(defaultValue = "1", required = false) int pageNo,
+            @RequestParam(defaultValue = "10", required = false) int pageSize
+    ) {
+        // 이부분 Service와 함께 작성 필요
+        // List<PostResponseDto> response = postService.getFollowerPosts(followerId, pageNo, pageSize);
+        return ResponseEntity.ok(null);
+    }
 
-//    @PostMapping("/posts/{id}/likes")      // 게시글 좋아요 등록
-
-//    @DeleteMapping("/posts/{id}/likes")       // 게시글 좋아요 삭제
 
 
     @PutMapping("/posts/{postId}")      // 게시글 수정
@@ -65,6 +71,7 @@ public class PostController {
         PostResponseDto responseDto = postService.delete(postId);
         return ResponseEntity.ok(responseDto);
     }
+
 
 }
 

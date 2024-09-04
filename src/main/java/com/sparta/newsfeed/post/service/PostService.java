@@ -7,6 +7,7 @@ import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,7 @@ public class PostService {
     @Autowired
     private UserRepository userRepository;
 
+    @Transactional
     public PostResponseDto create(Long userId, PostRequestDto dto) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new IllegalArgumentException("대상 유저가 없습니다."));
@@ -71,7 +73,7 @@ public class PostService {
                 .toList();
     }
 
-
+    @Transactional
     public PostResponseDto update(Long postId, PostRequestDto dto) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         post.update(
@@ -90,6 +92,7 @@ public class PostService {
 
     }
 
+    @Transactional
     public PostResponseDto delete(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         postRepository.delete(post);
