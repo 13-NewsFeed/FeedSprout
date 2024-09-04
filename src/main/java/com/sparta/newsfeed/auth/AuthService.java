@@ -3,6 +3,7 @@ package com.sparta.newsfeed.auth;
 import com.sparta.newsfeed.auth.dto.LoginRequestDto;
 import com.sparta.newsfeed.auth.dto.LoginResponseDto;
 import com.sparta.newsfeed.auth.util.JwtUtil;
+import com.sparta.newsfeed.config.UserPasswordEncoder;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
 import com.sparta.newsfeed.user.entity.User;
@@ -17,11 +18,12 @@ public class AuthService {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final UserPasswordEncoder userPasswordEncoder;
 
     // 프로필 생성
     @Transactional
     public UserResponseDto register(UserRequestDto requestDto) {
-        if (requestDto.getEmail() == null && requestDto.getNickname() == null) {
+        if (requestDto.getEmail() == null && requestDto.getUsername() == null) {
             throw new IllegalArgumentException("Email과 nickname은 필수입니다.");
         }
         // 이메일 중복 체크.
