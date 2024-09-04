@@ -6,9 +6,11 @@ import com.sparta.newsfeed.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
 
 @Entity
-@Getter
 @NoArgsConstructor
 @Table(name = "likey")
 public class Like {
@@ -29,14 +31,9 @@ public class Like {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    public Like(User user, Post post, Comment comment) {
-        this.user = user;
-        this.post = post;
-        this.comment = comment;
-    }
-
-    public Like(User user, Post post) {
-        this.user = user;
-        this.post = post;
+    public Like(User user, Post post, Comment comment){
+       this.user = user;
+       this.post = post;
+       this.comment = comment;
     }
 }
