@@ -26,4 +26,8 @@ public class ReComment extends Timestamped{
         this.contents = contents;
         this.comment = comment;
     }
+
+    public void update(String contents){
+        this.contents = contents;
+    }
 }

@@ -43,6 +43,18 @@ public class ReCommentController {
     }
 
     // 대댓글 수정
+    @PutMapping("/recomments/{recommentId}")
+    public ResponseEntity<ReCommentSaveResponseDto> updateReComment(
+            @PathVariable(name = "postId") Long postId,
+            @PathVariable(name = "commentId") Long commentId,
+            AuthUser authUser,
+            @PathVariable(name = "recommentId") Long recommentId,
+            @RequestBody ReCommentSaveRequestDto reCommentSaveRequestDto
+    ){
+        return ResponseEntity.ok(reCommentService.updateReComment(
+                postId, commentId, authUser, recommentId, reCommentSaveRequestDto
+        ));
+    }
 
     // 대댓글 삭제
 

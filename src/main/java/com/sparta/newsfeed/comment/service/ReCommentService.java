@@ -93,7 +93,42 @@ public class ReCommentService {
                 reComment.getCreatedAt(),
                 reComment.getModifiedAt()
         );
+    }
 
+    // 특정 id를 가진 대댓글 수정
+    @Transactional
+    public ReCommentSaveResponseDto updateReComment(
+            Long postId,
+            Long commentId,
+            AuthUser authUser,
+            Long recommentId,
+            ReCommentSaveRequestDto reCommentSaveRequestDto
+    ){
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new RuntimeException("Post not found")
+        );
+
+        User user = userRepository.findById(authUser.getId()).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new RuntimeException("Comment not found")
+        );
+
+        ReComment reComment = reCommentRepository.findById(recommentId).orElseThrow(
+                () -> new RuntimeException("Recomment not found")
+        );
+        reComment.update(reCommentSaveRequestDto.getContents());
+
+        return new ReCommentSaveResponseDto(
+                reComment.getId(),
+                reComment.getContents(),
+                commentId,
+                authUser.getId(),
+                reComment.getCreatedAt(),
+                reComment.getModifiedAt()
+        );
 
 
 
