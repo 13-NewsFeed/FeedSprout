@@ -1,11 +1,16 @@
 package com.sparta.newsfeed.like.service;
 
-import com.sparta.newsfeed.like.dto.StatusResult;
+import com.sparta.newsfeed.comment.entity.Comment;
+import com.sparta.newsfeed.comment.repository.CommentRepository;
+import com.sparta.newsfeed.like.dto.LikeResponseDto;
 import com.sparta.newsfeed.like.entity.Like;
 import com.sparta.newsfeed.like.repository.LikeRepository;
+import com.sparta.newsfeed.post.entity.Post;
+import com.sparta.newsfeed.post.repository.PostRepository;
+import com.sparta.newsfeed.user.entity.User;
+import com.sparta.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -14,10 +19,54 @@ import java.util.Optional;
 public class LikeService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
-    private final JwtUtil jwtUtil;
+    private final CommentRepository commentRepository;
 
+    //게시글 좋아요,좋아요 취소
+    public LikeResponseDto postLike(Long userid, Long postId)  {
+        User user =userRepository.findById(userid)
+                .orElseThrow(()->new RuntimeException("User not found"));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(()-> new RuntimeException("Post not found"));
+
+        //유저가 해당 게시글에 대해 좋아요를 눌렀는지 확인
+         Optional<Like> like= likeRepository.findByUserId(userid);
+
+         if(like.isEmpty()){
+             //좋아요가 없다.
+             Like newLike = new Like(user,post,null);
+             likeRepository.save(newLike);
+             return new LikeResponseDto("좋아요",200);
+         }else{
+             //좋아요가 이미 존재하면 삭제
+             likeRepository.delete(like.get());
+
+             return new LikeResponseDto("좋아요 삭제",404);
+         }
+    }
+
+    public LikeResponseDto commentLike(Long userId, Long commentId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new RuntimeException("User not found"));
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(()-> new RuntimeException("Comment not found"));
+
+        //댓글이 속해있는 게시글 조회
+        Post post = comment.getPost();
+
+        Optional<Like> like =likeRepository.findByUserIdAndCommentId(userId,commentId);
+
+        if(like.isEmpty()){
+            Like newLike = new Like(user,post,comment);  // <- 댓글에 게시글 조회한거 까지 넣음.
+            likeRepository.save(newLike);
+            return new LikeResponseDto("좋아요",200);
+        }else {
+            likeRepository.delete(like.get());
+            return new LikeResponseDto("좋아요 취소",404);
+        }
+
+    }
 
     //1) 사용자가 게시글에 좋아요를 누를때 호출
     //2) 먼저 게시글 존재 확인 후, 사용자가 이미 좋아요 눌렀는지 확인
@@ -28,97 +77,7 @@ public class LikeService {
     //increaseLikeCount , decreaseLikeCount
 
     //게시글 좋아요
-    public StatusResult likePost(Long id, User user){
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다..")
-        );
 
-        Optional<Like> checkUserAndPost = likeRepository.findByUserAndPost(user, post);
 
-        if (checkUserAndPost.isPresent()) {
-            return StatusResult.builder()
-                    .msg("이미 좋아요를 누르셨습니다.")
-                    .code(400)
-                    .build();
-        } else {
-            likeRepository.save(new Like(user, post));
-            post.increaseLikeCount(); //
-            return StatusResult.builder()
-                    .msg("해당 게시글을 좋아합니다.")
-                    .code(200)
-                    .build();
-        }
-    }
 
-    // 게시글 좋아요 취소
-    @Transactional
-    public StatusResult deleteLikePost(Long id, User user) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
-        );
-
-        Optional<Like> checkUserAndPost = likeRepository.findByUserAndPost(user, post);
-
-        if (!checkUserAndPost.isPresent()) {
-            return StatusResult.builder()
-                    .msg("좋아요가 존재하지 않습니다.")
-                    .code(400)
-                    .build();
-        } else {
-            likeRepository.delete(checkUserAndPost.get());
-            post.decreaseLikeCount(); //
-            return StatusResult.builder()
-                    .msg("좋아요 취소되었습니다.")
-                    .code(200)
-                    .build();
-        }
-    }
-
-    // 댓글 좋아요
-    @Transactional
-    public StatusResult likeComment(Long id, User user) {
-        Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
-        );
-
-        Optional<Like> checkUserAndComment = likeRepository.findByUserAndComment(user, comment);
-
-        if (checkUserAndComment.isPresent()) {
-            return StatusResult.builder()
-                    .msg("이미 좋아요를 누르셨습니다.")
-                    .code(400)
-                    .build();
-        } else {
-            likeRepository.save(new Like(user, comment));
-            comment.increaseLikeCount(); //
-            return StatusResult.builder()
-                    .msg("해당 댓글을 좋아합니다.")
-                    .code(200)
-                    .build();
-        }
-    }
-
-    // 댓글 좋아요 취소
-    @Transactional
-    public StatusResult deleteLikeComment(Long id, User user) {
-        Comment comment = commentRepository.findById(id).
-                orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
-        );
-
-        Optional<Like> checkUserAndComment = likeRepository.findByUserAndComment(user, comment);
-
-        if (!checkUserAndComment.isPresent()) {
-            return StatusResult.builder()
-                    .msg("좋아요가 존재하지 않습니다.")
-                    .code(400)
-                    .build();
-        } else {
-            likeRepository.delete(checkUserAndComment.get());
-            comment.decreaseLikeCount(); //
-            return StatusResult.builder()
-                    .msg("좋아요가 취소되었습니다.")
-                    .code(200)
-                    .build();
-        }
-    }
 }

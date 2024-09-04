@@ -8,12 +8,12 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @ToString
-public class StatusResult {
+public class LikeResponseDto {
     private String msg; // 메시지
     private int code; // 응답코드
 
     @Builder
-    public StatusResult(String msg, int code){
+    public LikeResponseDto(String msg, int code){
         this.msg = msg;
         this.code = code;
     }

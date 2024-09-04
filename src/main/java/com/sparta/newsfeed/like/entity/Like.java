@@ -1,12 +1,15 @@
 package com.sparta.newsfeed.like.entity;
 
+import com.sparta.newsfeed.comment.entity.Comment;
+import com.sparta.newsfeed.post.entity.Post;
+import com.sparta.newsfeed.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
+
 @Entity
 @NoArgsConstructor
 @Table(name = "likey")
@@ -28,14 +31,9 @@ public class Like {
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    public Like(User user, Post post){
-        setUser(user);
-        setPost(post);
+    public Like(User user, Post post, Comment comment){
+       this.user = user;
+       this.post = post;
+       this.comment = comment;
     }
-
-    public Like(User user, Comment comment){
-        setUser(user);
-        setComment(comment);
-    }
-
 }
