@@ -9,12 +9,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -79,6 +75,7 @@ public class User extends TimeStamp {
     // 내가 팔로우한 애들
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Follow> followers = new ArrayList<>();
+
     // 니들이 나한테 건 팔로우
     @OneToMany(mappedBy = "followee", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Follow> followees = new ArrayList<>();
