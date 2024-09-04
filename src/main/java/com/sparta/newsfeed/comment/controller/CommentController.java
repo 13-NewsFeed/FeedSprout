@@ -4,6 +4,7 @@ import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.comment.dto.*;
 import com.sparta.newsfeed.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
-/*
 
     // 댓글 생성
     @PostMapping("/posts/{post-id}/comments")
@@ -25,8 +25,13 @@ public class CommentController {
 
     // 댓글 조회(전체)
     @GetMapping("/posts/{post-id}/comments")
-    public ResponseEntity<List<CommentGetAllResponseDto>> getAllComments(@PathVariable(name = "post-id") Long postId, AuthUser authUser) {
-        return ResponseEntity.ok(commentService.getAllComments(postId, authUser));
+    public ResponseEntity<Page<CommentGetAllResponseDto>> getAllComments(
+            @PathVariable(name = "post-id") Long postId,
+            AuthUser authUser,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        return ResponseEntity.ok(commentService.getAllComments(postId, authUser, page, size));
     }
 
     // 댓글 수정
@@ -43,7 +48,6 @@ public class CommentController {
         commentService.deleteComment(commentId);
     }
 
-*/
 
 
 
