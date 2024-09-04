@@ -119,10 +119,4 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
-
-    // 이메일 가져오기
-    public String getUserEmailFromToken(String token) {
-        Claims claims = getUserInfoFromToken(token);
-        return claims.getSubject();
-    }
 }

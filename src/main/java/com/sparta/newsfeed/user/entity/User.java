@@ -47,22 +47,22 @@ public class User extends TimeStamp {
 
     // 게시글 좋아요와의 일대다 관계
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostLikes> postLikesjList = new ArrayList<>();
+    private List<Like> postLikesjList = new ArrayList<>();
 
 
     // 댓글 좋아요와의 일대다 관계
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommentLikes> commentLikesList = new ArrayList<>();
+    private List<Like> commentLikesList = new ArrayList<>();
 
 
-    // 북마크와의 일대다 관계(북마크가 하나의 유저만 참조, 북마크 공유가 제한?)
+/*    // 북마크와의 일대다 관계(북마크가 하나의 유저만 참조, 북마크 공유가 제한?)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bookmark> bookmarkList = new ArrayList<>();
 
 
     // 이미지와의 일대일 단방향 관계
     @OneToOne(mappedBy = "imageUrl")
-    private Image image;
+    private Image image;*/
 
     public User(UserRequestDto requestDto){
 

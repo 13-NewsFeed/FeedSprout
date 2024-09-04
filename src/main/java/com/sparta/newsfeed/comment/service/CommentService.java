@@ -77,26 +77,7 @@ public class CommentService {
                 comment.getCreatedAt(),
                 comment.getModifiedAt()
         ));
-
-
-
-
-
-
-
-
-        /*for (Comment comment : commentList) {
-            CommentGetAllResponseDto dto = new CommentGetAllResponseDto(
-                    comment.getId(),
-                    comment.getContents(),
-                    postId,
-                    authUser.getId(),
-                    comment.getCreatedAt(),
-                    comment.getModifiedAt()
-            );
-            dtoList.add(dto);
-        }
-        return dtoList;*/
+      
     }
 
     // 특정 댓글 내용 수정
@@ -122,9 +103,5 @@ public class CommentService {
     public void deleteComment(Long commentId) {
         commentRepository.deleteById(commentId);
     }
-
-
-
-
 
 }
