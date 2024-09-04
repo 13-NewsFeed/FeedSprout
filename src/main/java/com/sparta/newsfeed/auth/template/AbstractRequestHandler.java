@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+// resource와
 public abstract class AbstractRequestHandler implements RequestHandler {
     protected final AuthorizationStrategy authorizationStrategy;
 

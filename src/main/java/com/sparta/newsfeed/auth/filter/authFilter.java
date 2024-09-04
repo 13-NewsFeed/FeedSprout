@@ -4,24 +4,35 @@ import com.sparta.newsfeed.auth.strategy.AuthorizationStrategy;
 import com.sparta.newsfeed.auth.strategy.CommentAuthorization;
 import com.sparta.newsfeed.auth.strategy.PostAuthorization;
 import com.sparta.newsfeed.auth.strategy.ProfileAuthorization;
-import com.sparta.newsfeed.auth.template.PostRequestHandler;
-import com.sparta.newsfeed.auth.template.RequestHandler;
 import com.sparta.newsfeed.auth.util.JwtUtil;
+import com.sparta.newsfeed.comment.repository.CommentRepository;
+import com.sparta.newsfeed.post.repository.PostRepository;
+import com.sparta.newsfeed.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.io.IOException;
 
 @Slf4j
 @Order(2)
+@Component
 @RequiredArgsConstructor
 public class authFilter implements Filter {
 
     private final JwtUtil jwtUtil;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void doFilter(ServletRequest request,
@@ -35,8 +46,7 @@ public class authFilter implements Filter {
         String a = httpServletRequest.getHeader("Authorization");
         log.info(a);
 
-        if(StringUtils.hasText(requestURI) &&
-                (requestURI.startsWith("/auth/login") || requestURI.startsWith("/auth/register"))) {
+        if(StringUtils.hasText(requestURI) && (requestURI.startsWith("/auth/"))) {
 
             filterChain.doFilter(request, response);
 
@@ -53,129 +63,7 @@ public class authFilter implements Filter {
                 // 토큰에서 사용자 정보 가져오기
                 Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
 
-
-                /*// 게시글 수정 및 삭제
-                if (requestURI.startsWith("/posts/")) {
-                    if(requestURI.endsWith("likes")) {
-                        if (method.equals("DELETE")) {
-
-                            String postIdStr = requestURI.split("/")[2];
-                            Long postId = Long.valueOf(postIdStr);
-                            User user = postRepository.findById(postId).getUser();
-
-                            if(isSameUser(info, user)) {
-                                filterChain.doFilter(request, response);
-                            } else {
-                                throw new IllegalArgumentException();
-                            }
-
-                        } else {
-                            filterChain.doFilter(request, response);
-                        }
-                    } else {
-                        if(method.equals("UPDATE") || method.equals("DELETE")) {
-
-                            String postIdStr = requestURI.split("/")[2];
-                            Long postId = Long.valueOf(postIdStr);
-                            User user = postRepository.findById(postId).getUser();
-
-                            if(isSameUser(info, user)) {
-                                filterChain.doFilter(request, response);
-                            } else {
-                                throw new IllegalArgumentException();
-                            }
-
-                        } else {
-                            filterChain.doFilter(request, response);
-                        }
-                    }
-                }
-                // 댓글 수정 및 삭제
-                else if (requestURI.startsWith("/comments/")) {
-                    if(requestURI.endsWith("likes")) {
-                        if (method.equals("DELETE")) {
-
-                            String postIdStr = requestURI.split("/")[2];
-                            Long postId = Long.valueOf(postIdStr);
-                            User user = postRepository.findById(postId).getUser();
-
-                            if(isSameUser(info, user)) {
-                                filterChain.doFilter(request, response);
-                            } else {
-                                throw new IllegalArgumentException();
-                            }
-
-                        } else {
-                            filterChain.doFilter(request, response);
-                        }
-                    } else {
-                        if(method.equals("UPDATE") || method.equals("DELETE")) {
-
-                            String commentIdStr = requestURI.split("/")[2];
-                            Long commenttId = Long.valueOf(commentIdStr);
-                            User user = commentRepository.findById(commenttId).getUser();
-
-                            if(isSameUser(info, user)) {
-                                filterChain.doFilter(request, response);
-                            } else {
-                                throw new IllegalArgumentException();
-                            }
-                        } else {
-                            filterChain.doFilter(request, response);
-                        }
-                    }
-                }
-
-                else if (requestURI.startsWith("/profiles/")) {
-
-                    // 팔로우 관리
-                    if (requestURI.endsWith("follows") || requestURI.endsWith("state")) {
-                        if(method.equals("UPDATE") || method.equals("DELETE")) {
-
-                            String prodfileIdStr = requestURI.split("/")[2];
-                            Long prodfileId = Long.valueOf(prodfileIdStr);
-                            User user = postRepository.findById(prodfileId).getUser();
-
-                            if(isSameUser(info, user)) {
-                                filterChain.doFilter(request, response);
-                            } else {
-                                throw new IllegalArgumentException();
-                            }
-
-                        } else {
-                            // follow 조회는 패스
-                            filterChain.doFilter(request, response);
-                        }
-
-                    } else {
-
-                        // 프로필 수정
-                        if(method.equals("UPDATE")) {
-
-                            String prodfileIdStr = requestURI.split("/")[2];
-                            Long prodfileId = Long.valueOf(prodfileIdStr);
-                            User user = postRepository.findById(prodfileId).getUser();
-
-                            if(isSameUser(info, user)) {
-                                filterChain.doFilter(request, response);
-                            } else {
-                                throw new IllegalArgumentException();
-                            }
-
-                        } else {
-                            // profile 조회는 패스
-                            filterChain.doFilter(request, response);
-                        }
-                    }
-                }*/
-
-                if (requestURI.startsWith("/posts/")) {
-                    handlePostRequest(requestURI, method, info);
-                } else if (requestURI.startsWith("/comments/")) {
-                    handleCommentRequest(requestURI, method, info);
-                } else if (requestURI.startsWith("/profiles/")) {
-                    handleProfileRequest(requestURI, method, info);
-                }
+                customHandleRequest(requestURI, method, info);
 
                 filterChain.doFilter(request, response);
 
@@ -185,43 +73,39 @@ public class authFilter implements Filter {
         }
     }
 
-    /*private boolean isSameUser(Claims info, User user) throws ServletException, IOException {
 
-        if(user.getEmail() == info.getSubject()) {
-            return true;
-        } else {
-            return false;
-        }
-    }*/
-
-    private void handlePostRequest(String requestURI, String method, Claims info) {
-        if (method.equals("UPDATE") || method.equals("DELETE")) {
-            Long postId = extractResourceId(requestURI);
-            AuthorizationStrategy authStrategy = new PostAuthorization(postRepository);
-            if (!authStrategy.isAuthorized(info, postId)) {
-                throw new IllegalArgumentException("Unauthorized");
+    private void customHandleRequest(String requestURI, String method, Claims info) throws ServletException, IOException {
+        if (method.equals("PUT") || method.equals("DELETE")) {
+            Long id = extractResourceId(requestURI);
+            boolean result = handlerRequest(requestURI).isAuthorized(info, id);
+            if (!result) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             }
         }
     }
 
-    private void handleCommentRequest(String requestURI, String method, Claims info) {
-        if (method.equals("UPDATE") || method.equals("DELETE")) {
-            Long commentId = extractResourceId(requestURI);
-            AuthorizationStrategy authStrategy = new CommentAuthorization(commentRepository);
-            if (!authStrategy.isAuthorized(info, commentId)) {
-                throw new IllegalArgumentException("Unauthorized");
-            }
-        }
-    }
+    private AuthorizationStrategy handlerRequest(String requestURI) throws ServletException, IOException {
+        AuthorizationStrategy authStrategy = null;
 
-    private void handleProfileRequest(String requestURI, String method, Claims info) {
-        if (method.equals("UPDATE") || method.equals("DELETE")) {
-            Long profileId = extractResourceId(requestURI);
-            AuthorizationStrategy authStrategy = new ProfileAuthorization(profileRepository);
-            if (!authStrategy.isAuthorized(info, profileId)) {
-                throw new IllegalArgumentException("Unauthorized");
+        String start = requestURI.split("/")[1];
+        switch (start) {
+            case "post": {
+                authStrategy = new PostAuthorization(postRepository);
+                break;
+            }
+            case "comment": {
+                authStrategy = new CommentAuthorization(commentRepository);
+                break;
+            }
+            case "profile": {
+                authStrategy = new ProfileAuthorization(userRepository);
+                break;
+            }
+            default: {
+                throw new IllegalArgumentException("not found");
             }
         }
+        return authStrategy;
     }
 
     private Long extractResourceId(String requestURI) {
