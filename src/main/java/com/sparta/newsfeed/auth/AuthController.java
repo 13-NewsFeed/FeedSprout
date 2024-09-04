@@ -57,8 +57,8 @@ public class AuthController {
     }
 
     // 로그아웃
-    public ResponseEntity<?> logout() {
+    /*public ResponseEntity<?> logout() {
 
-    }
+    }*/
 
 }

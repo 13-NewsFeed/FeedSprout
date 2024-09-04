@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.user.controller;
 
+import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.user.dto.FollowResponseDto;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
@@ -32,8 +33,7 @@ public class UserController {
 
     // 프로필 조회
     @GetMapping("/profiles/{id}")
-    public ResponseEntity<UserResponseDto> getProfileById(@PathVariable Long id) {
-
+    public ResponseEntity<UserResponseDto> getProfileById(@PathVariable Long id) throws CustomException {
         UserResponseDto userResponseDto = userService.getProfileById(id);
         // 성공적 조회 : 200 상태 코드로 조회된 사용자 정보를 반환
         return ResponseEntity.ok(userResponseDto);
