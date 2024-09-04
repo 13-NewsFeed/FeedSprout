@@ -35,4 +35,8 @@ public class Like {
         this.comment = comment;
     }
 
+    public Like(User user, Post post) {
+        this.user = user;
+        this.post = post;
+    }
 }

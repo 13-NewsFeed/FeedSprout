@@ -8,6 +8,7 @@ import com.sparta.newsfeed.like.entity.Like;
 import com.sparta.newsfeed.like.repository.LikeRepository;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.post.repository.PostRepository;
+import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
