@@ -1,19 +1,16 @@
 package com.sparta.newsfeed.user.service;
 
-import com.sparta.newsfeed.user.dto.FollowResponseDto;
-import com.sparta.newsfeed.user.dto.UserResponseDto;
-import com.sparta.newsfeed.user.entity.Follow;
-import com.sparta.newsfeed.user.entity.FollowState;
+import com.sparta.newsfeed.follow.dto.FollowResponseDto;
+import com.sparta.newsfeed.follow.entity.Follow;
+import com.sparta.newsfeed.follow.entity.FollowState;
 import com.sparta.newsfeed.user.entity.User;
-import com.sparta.newsfeed.user.repository.FollowRepository;
+import com.sparta.newsfeed.follow.repository.FollowRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

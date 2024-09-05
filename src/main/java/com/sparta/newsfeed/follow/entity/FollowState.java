@@ -1,4 +1,4 @@
-package com.sparta.newsfeed.user.entity;
+package com.sparta.newsfeed.follow.entity;
 
 public enum FollowState {
 

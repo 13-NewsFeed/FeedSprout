@@ -2,13 +2,14 @@ package com.sparta.newsfeed.post.service;
 
 
 import com.sparta.newsfeed.auth.dto.AuthUser;
+import com.sparta.newsfeed.config.exception.CustomException;
+import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
-import com.sparta.newsfeed.user.entity.Follow;
 import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.post.repository.PostRepository;
-import com.sparta.newsfeed.user.repository.FollowRepository;
+import com.sparta.newsfeed.follow.repository.FollowRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -88,6 +88,10 @@ public class PostService {
         // 팔로우 목록 가져오기
         List<Long> followedUserIds = followRepository.findFolloweeIdsByFollowerId(authUser.getId());
 
+        if (followedUserIds.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FOUND);
+        }
+
         // 페이지 요청 설정
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
 
@@ -106,7 +110,7 @@ public class PostService {
         boolean isFollowing2 = followRepository.existsByFollowerIdAndFolloweeId(followeeId, authUser.getId());
 
         if (!(isFollowing1 || isFollowing2)) {
-            throw new IllegalArgumentException("팔로우를 한 사용자가 아닙니다.");
+            throw new CustomException(ErrorCode.NOT_FOUND);
         }
 
         // followeeId 유저의 게시글 조회

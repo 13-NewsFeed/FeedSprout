@@ -1,10 +1,10 @@
-package com.sparta.newsfeed.user.entity;
+package com.sparta.newsfeed.follow.entity;
 
+import com.sparta.newsfeed.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.Set;
 
 @Entity
 @Getter

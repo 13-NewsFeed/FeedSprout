@@ -4,6 +4,8 @@ import com.sparta.newsfeed.auth.dto.LoginRequestDto;
 import com.sparta.newsfeed.auth.dto.LoginResponseDto;
 import com.sparta.newsfeed.auth.util.JwtUtil;
 import com.sparta.newsfeed.config.UserPasswordEncoder;
+import com.sparta.newsfeed.config.exception.CustomException;
+import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
 import com.sparta.newsfeed.user.entity.Image;
@@ -24,12 +26,12 @@ public class AuthService {
     // 프로필 생성
     @Transactional
     public UserResponseDto register(UserRequestDto requestDto) {
-        if (requestDto.getEmail() == null && requestDto.getUsername() == null) {
-            throw new IllegalArgumentException("Email과 nickname은 필수입니다.");
+        if (requestDto.getEmail() == null || requestDto.getUsername() == null) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
         }
         // 이메일 중복 체크.
         if(userRepository.existsByEmail(requestDto.getEmail())){
-            throw new IllegalArgumentException("이미 사용하고 있는 Email 입니다.");
+            throw new CustomException(ErrorCode.CONFLICT);
         }
 
         User user = new User(requestDto);
@@ -43,8 +45,13 @@ public class AuthService {
     }
 
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
+        if (loginRequestDto.getEmail() == null) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
+
         User user = userRepository.findByEmail(email).get();
         if(userPasswordEncoder.matches(password, user.getPassword())) {
 
@@ -54,7 +61,7 @@ public class AuthService {
             return loginResponseDto;
 
         } else {
-            return null;
+            throw new CustomException(ErrorCode.CONFLICT);
         }
     }
 }

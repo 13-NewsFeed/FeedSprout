@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponse> handleCustomException(final CustomException e) {
+    public ResponseEntity<?> handleCustomException(final CustomException e) {
         log.error("CustomException : " + e.getErrorCode());
         return ResponseEntity
                 .status(e.getErrorCode().getStatus().value())
@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
 
     // 405 Exception
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
+    public ResponseEntity<?> handleHttpRequestMethodNotSupportedException(final HttpRequestMethodNotSupportedException e) {
         log.error("handleHttpRequestMethodNotSupportedException : " + e.getMessage());
         return ResponseEntity
                 .status(ErrorCode.METHOD_NOT_ALLOWED.getStatus().value())
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
 
     // 500 Exception
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(final Exception e) {
+    public ResponseEntity<?> handleException(final Exception e) {
         log.error("handleException : " + e.getMessage());
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus().value())

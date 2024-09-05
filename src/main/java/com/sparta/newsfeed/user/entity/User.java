@@ -2,6 +2,7 @@ package com.sparta.newsfeed.user.entity;
 
 
 import com.sparta.newsfeed.comment.entity.Comment;
+import com.sparta.newsfeed.follow.entity.Follow;
 import com.sparta.newsfeed.like.entity.Like;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
@@ -11,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter

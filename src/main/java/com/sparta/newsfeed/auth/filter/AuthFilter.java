@@ -6,6 +6,8 @@ import com.sparta.newsfeed.auth.strategy.PostAuthorization;
 import com.sparta.newsfeed.auth.strategy.ProfileAuthorization;
 import com.sparta.newsfeed.auth.util.JwtUtil;
 import com.sparta.newsfeed.comment.repository.CommentRepository;
+import com.sparta.newsfeed.config.exception.CustomException;
+import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -41,7 +43,6 @@ public class AuthFilter implements Filter {
         String method = httpServletRequest.getMethod();
         String requestURI = httpServletRequest.getRequestURI();
 
-        String a = httpServletRequest.getHeader("Authorization");
 
         if(StringUtils.hasText(requestURI) && (requestURI.startsWith("/auth/"))) {
 
@@ -54,7 +55,7 @@ public class AuthFilter implements Filter {
 
                 // 토큰 검증
                 if (!jwtUtil.validateToken(tokenValue)) {
-                    throw new IllegalArgumentException("Invalid Token");
+                    throw new CustomException(ErrorCode.UNAUTHORIZED);
                 }
 
                 // 토큰에서 사용자 정보 가져오기
@@ -67,7 +68,7 @@ public class AuthFilter implements Filter {
                 filterChain.doFilter(request, response);
 
             } else {
-                throw new IllegalArgumentException("Not Found Token");
+                throw new CustomException(ErrorCode.UNAUTHORIZED);
             }
         }
     }
@@ -78,7 +79,7 @@ public class AuthFilter implements Filter {
             Long id = extractResourceId(requestURI);
             boolean result = handlerRequest(requestURI).isAuthorized(info, id);
             if (!result) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+                throw new CustomException(ErrorCode.FORBIDDEN);
             }
         }
     }
@@ -99,7 +100,7 @@ public class AuthFilter implements Filter {
             authStrategy = new ProfileAuthorization(userRepository);
 
         } else {
-            throw new IllegalArgumentException("Resource not found");
+            throw new CustomException(ErrorCode.NOT_FOUND);
         }
 
         return authStrategy;
