@@ -2,6 +2,8 @@ package com.sparta.newsfeed.post.service;
 
 
 import com.sparta.newsfeed.auth.dto.AuthUser;
+import com.sparta.newsfeed.config.exception.CustomException;
+import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
@@ -66,28 +68,29 @@ public class PostService {
 
     public List<PostResponseDto> getPostsByTime(AuthUser authUser, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by("modifiedAt").descending());
-
-        return postRepository.findByUserId(authUser.getId(), pageable)
-                .stream()
-                .map(PostResponseDto::new)
-                .toList();
+        Page<Post> pages = postRepository.findByUserId(authUser.getId(), pageable);
+        if (pages.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FOUND);
+        }
+        return pages.stream().map(PostResponseDto::new).toList();
     }
 
     public List<PostResponseDto> getPostsByLikes(AuthUser authUser, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Post> postPage = postRepository.findByUserIdOrderByLikesCountDesc(authUser.getId(), pageable);
-
-        // Page<Post> 결과를 PostResponseDto 리스트로 변환
-        return postPage.stream()
-                .map(PostResponseDto::new)
-                .toList();
+        Page<Post> pages = postRepository.findByUserIdOrderByLikesCountDesc(authUser.getId(), pageable);
+        if (pages.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FOUND);
+        }
+        return pages.stream().map(PostResponseDto::new).toList();
     }
 
     // 팔로우 전체 게시글 조회
     public List<PostResponseDto> getPostsByFollowedUsers(AuthUser authUser, int pageNo, int pageSize) {
         // 팔로우 목록 가져오기
         List<Long> followedUserIds = followRepository.findFolloweeIdsByFollowerId(authUser.getId());
-
+        if (followedUserIds.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FOUND);
+        }
         // 페이지 요청 설정
         PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
 
@@ -100,13 +103,14 @@ public class PostService {
                 .toList();
     }
 
+    // 팔로우
     public List<PostResponseDto> getPostsByFollowedUser(AuthUser authUser, Long followeeId, int pageNo, int pageSize) {
         // 팔로우 관계 확인
         boolean isFollowing1 = followRepository.existsByFollowerIdAndFolloweeId(authUser.getId(), followeeId);
         boolean isFollowing2 = followRepository.existsByFollowerIdAndFolloweeId(followeeId, authUser.getId());
 
         if (!(isFollowing1 || isFollowing2)) {
-            throw new IllegalArgumentException("팔로우를 한 사용자가 아닙니다.");
+            throw new CustomException(ErrorCode.NOT_FOUND);
         }
 
         // followeeId 유저의 게시글 조회

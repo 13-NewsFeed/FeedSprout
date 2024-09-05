@@ -2,6 +2,8 @@ package com.sparta.newsfeed.post.controller;
 
 
 import com.sparta.newsfeed.auth.dto.AuthUser;
+import com.sparta.newsfeed.config.exception.CustomException;
+import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
@@ -25,14 +27,26 @@ public class PostController {
     public ResponseEntity<PostResponseDto> create(
             AuthUser authUser, @RequestBody PostRequestDto dto
     ) {
-        PostResponseDto response = postService.create(authUser, dto);
-        return ResponseEntity.ok(response);
+        try {
+            PostResponseDto response = postService.create(authUser, dto);
+            return ResponseEntity.ok(response);
+        } catch (CustomException e) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/posts/{postId}")       // 게시글 단건 조회
     public ResponseEntity<PostResponseDto> getPost(@PathVariable Long postId) {
-        PostResponseDto response = postService.getpost(postId);
-        return ResponseEntity.ok(response);
+        try {
+            PostResponseDto response = postService.getpost(postId);
+            return ResponseEntity.ok(response);
+        } catch (CustomException e) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/posts/editedDate")       // 게시글 조회 (수정일자 내림차순)
@@ -41,8 +55,14 @@ public class PostController {
             @RequestParam(defaultValue = "0", required = false) int pageNo,
             @RequestParam(defaultValue = "10", required = false) int pageSize
     ) {
-        List<PostResponseDto> response = postService.getPostsByTime(authUser, pageNo, pageSize);
-        return ResponseEntity.ok(response);
+        try {
+            List<PostResponseDto> response = postService.getPostsByTime(authUser, pageNo, pageSize);
+            return ResponseEntity.ok(response);
+        } catch (CustomException e) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/posts/likes")       // 게시글 조회 (좋아요 많은순 내림차순)
@@ -51,10 +71,15 @@ public class PostController {
             @RequestParam(defaultValue = "0", required = false) int pageNo,
             @RequestParam(defaultValue = "10", required = false) int pageSize
     ) {
-        List<PostResponseDto> response = postService.getPostsByLikes(authUser, pageNo, pageSize);
-        return ResponseEntity.ok(response);
+        try {
+            List<PostResponseDto> response = postService.getPostsByLikes(authUser, pageNo, pageSize);
+            return ResponseEntity.ok(response);
+        } catch (CustomException e) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
-
 
     @GetMapping("/profiles/follows/posts")      // 팔로우 한 사람들 게시글 모두 조회
     public ResponseEntity<List<PostResponseDto>> getPostsByFollowUsers(
@@ -62,8 +87,14 @@ public class PostController {
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "10") int pageSize
     ) {
-        List<PostResponseDto> response = postService.getPostsByFollowedUsers(authUser, pageNo, pageSize);
-        return ResponseEntity.ok(response);
+        try {
+            List<PostResponseDto> response = postService.getPostsByFollowedUsers(authUser, pageNo, pageSize);
+            return ResponseEntity.ok(response);
+        } catch (CustomException e) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
@@ -74,22 +105,40 @@ public class PostController {
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "10") int pageSize
     ) {
-        List<PostResponseDto> response = postService.getPostsByFollowedUser(authUser, followeeId, pageNo, pageSize);
-        return ResponseEntity.ok(response);
+        try {
+            List<PostResponseDto> response = postService.getPostsByFollowedUser(authUser, followeeId, pageNo, pageSize);
+            return ResponseEntity.ok(response);
+        } catch (CustomException e) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
     @PutMapping("/posts/{postId}")      // 게시글 수정
     public ResponseEntity<PostResponseDto> update(@PathVariable Long postId, @RequestBody PostRequestDto dto) {
-        PostResponseDto response = postService.update(postId, dto);
-        return ResponseEntity.ok(response);
+        try {
+            PostResponseDto response = postService.update(postId, dto);
+            return ResponseEntity.ok(response);
+        } catch (CustomException e) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
     @DeleteMapping("/posts/{postId}")       // 게시글 삭제
     public ResponseEntity<PostResponseDto> delete(@PathVariable Long postId) {
-        PostResponseDto responseDto = postService.delete(postId);
-        return ResponseEntity.ok(responseDto);
+        try {
+            PostResponseDto responseDto = postService.delete(postId);
+            return ResponseEntity.ok(responseDto);
+        } catch (CustomException e) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
