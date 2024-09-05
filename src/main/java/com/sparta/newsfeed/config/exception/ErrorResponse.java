@@ -19,4 +19,7 @@ public class ErrorResponse {
         this.code = errorCode.name();
         this.message = errorCode.getMessage();
     }
+
+    // 사용자에게 노출해도되는 메시지인지 고민
+
 }
