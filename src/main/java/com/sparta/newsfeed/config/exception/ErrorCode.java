@@ -30,8 +30,6 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
 
 
-
-
     private final HttpStatus status;
     private final String message;
 }

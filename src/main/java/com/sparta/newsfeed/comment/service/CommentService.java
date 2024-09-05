@@ -42,8 +42,39 @@ public class CommentService {
         Comment newComment = new Comment(
                 commentSaveRequestDto.getContents(),
                 post,
-                user
+                user,
+                null,
+                null
         );
+        Comment savedComment = commentRepository.save(newComment);
+
+        return new CommentSaveResponseDto(
+                savedComment.getId(),
+                savedComment.getContents(),
+                postId,
+                authUser.getId(),
+                savedComment.getCreatedAt(),
+                savedComment.getModifiedAt()
+        );
+    }
+
+    // 대댓글 생성 요청을 받아 저장
+    @Transactional
+    public CommentSaveResponseDto saveReplyComment(Long postId, Long commentId, AuthUser authUser, CommentSaveRequestDto commentSaveRequestDto) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Comment parent = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("Post not found"));
+
+        User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Comment newComment = new Comment(
+                commentSaveRequestDto.getContents(),
+                post,
+                user,
+                parent,
+                null
+        );
+
         Comment savedComment = commentRepository.save(newComment);
 
         return new CommentSaveResponseDto(

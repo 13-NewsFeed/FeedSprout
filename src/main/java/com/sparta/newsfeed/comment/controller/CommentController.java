@@ -24,6 +24,14 @@ public class CommentController {
         return ResponseEntity.ok(commentService.saveComment(postId, authUser, commentSaveRequestDto));
     }
 
+    // 대댓글 생성
+    @PostMapping("/comments/{commentId}")
+    public ResponseEntity<CommentSaveResponseDto> addReplyComment(
+            @PathVariable(name = "postId") Long postId, @PathVariable(name = "commentId") Long commentId, AuthUser authUser, @RequestBody CommentSaveRequestDto commentSaveRequestDto
+    ) {
+        return ResponseEntity.ok(commentService.saveReplyComment(postId, commentId, authUser, commentSaveRequestDto));
+    }
+
     // 댓글 조회(전체)
     @GetMapping("/comments")
     public ResponseEntity<Page<CommentGetAllResponseDto>> getAllComments(

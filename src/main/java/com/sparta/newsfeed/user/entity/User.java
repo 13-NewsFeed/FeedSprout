@@ -2,6 +2,7 @@ package com.sparta.newsfeed.user.entity;
 
 
 import com.sparta.newsfeed.comment.entity.Comment;
+import com.sparta.newsfeed.follow.entity.Follow;
 import com.sparta.newsfeed.like.entity.Like;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
@@ -55,14 +56,14 @@ public class User extends TimeStamp {
     private List<Like> commentLikesList = new ArrayList<>();
 
 
-/*    // 북마크와의 일대다 관계(북마크가 하나의 유저만 참조, 북마크 공유가 제한?)
+    // 북마크와의 일대다 관계(북마크가 하나의 유저만 참조, 북마크 공유가 제한?)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bookmark> bookmarkList = new ArrayList<>();
 
 
     // 이미지와의 일대일 단방향 관계
-    @OneToOne(mappedBy = "imageUrl")
-    private Image image;*/
+    @OneToMany(mappedBy = "user")
+    private List<Image> images;
 
     public User(UserRequestDto requestDto){
 
