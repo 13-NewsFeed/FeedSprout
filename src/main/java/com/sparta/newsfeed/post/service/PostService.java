@@ -99,10 +99,10 @@ public class PostService {
             throw new CustomException(ErrorCode.NOT_FOUND);
         }
         // 페이지 요청 설정
-        PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
 
         // 팔로우한 사용자들의 게시물 가져오기
-        Page<Post> postPage = postRepository.findByUserIdIn(followedUserIds, pageRequest);
+        Page<Post> postPage = postRepository.findByUserIdIn(followedUserIds, pageable);
 
         // 게시물을 DTO로 변환
         return postPage.stream()
