@@ -6,6 +6,7 @@ import com.sparta.newsfeed.comment.entity.Comment;
 import com.sparta.newsfeed.comment.repository.CommentRepository;
 import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
+import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.entity.User;
@@ -90,7 +91,7 @@ public class CommentService {
     }
 
     // 특정 게시글의 댓글 전부 조회
-    public Page<CommentGetAllResponseDto> getAllComments(
+    public List<CommentGetAllResponseDto> getAllComments(
             Long postId,
             AuthUser authUser,
             int page,
@@ -103,20 +104,12 @@ public class CommentService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new RuntimeException("Post not found")
         );
-
         Pageable pageable = PageRequest.of(page - 1, size);
-
-        Page<Comment> comments = commentRepository.findByPostId(postId, pageable);
-
-        return comments.map(comment -> new CommentGetAllResponseDto(
-                comment.getId(),
-                comment.getContents(),
-                post.getId(),
-                user.getId(),
-                comment.getCreatedAt(),
-                comment.getModifiedAt()
-        ));
-
+        Page<Comment> pages = commentRepository.findByPostId(postId, pageable);
+        return pages
+                .stream()
+                .map(CommentGetAllResponseDto::new)
+                .toList();
     }
 
     // 특정 댓글 내용 수정

@@ -1,5 +1,6 @@
 package com.sparta.newsfeed.comment.dto;
 
+import com.sparta.newsfeed.comment.entity.Comment;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -22,4 +23,14 @@ public class CommentGetAllResponseDto {
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }
+
+    public CommentGetAllResponseDto(Comment comment) {
+        this.id = comment.getId();
+        this.contents = comment.getContents();
+        this.postId = comment.getPost().getId();
+        this.userId = comment.getUser().getId();
+        this.createdAt = comment.getCreatedAt();
+        this.modifiedAt = comment.getModifiedAt();
+    }
+
 }
