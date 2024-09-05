@@ -4,6 +4,8 @@ import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.comment.dto.*;
 import com.sparta.newsfeed.comment.entity.Comment;
 import com.sparta.newsfeed.comment.repository.CommentRepository;
+import com.sparta.newsfeed.config.exception.CustomException;
+import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.entity.User;
@@ -32,11 +34,11 @@ public class CommentService {
     public CommentSaveResponseDto saveComment(Long postId, AuthUser authUser, CommentSaveRequestDto commentSaveRequestDto) {
 
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new RuntimeException("Post not found")
+                () -> new CustomException(ErrorCode.NOT_FOUND)
         );
 
         User user = userRepository.findById(authUser.getId()).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new CustomException(ErrorCode.NOT_FOUND)
         );
 
         Comment newComment = new Comment(

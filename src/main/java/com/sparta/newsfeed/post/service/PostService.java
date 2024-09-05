@@ -7,10 +7,12 @@ import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
-import com.sparta.newsfeed.user.entity.Follow;
+import com.sparta.newsfeed.follow.entity.Follow;
+import com.sparta.newsfeed.user.entity.Image;
 import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.post.repository.PostRepository;
-import com.sparta.newsfeed.user.repository.FollowRepository;
+import com.sparta.newsfeed.follow.repository.FollowRepository;
+import com.sparta.newsfeed.user.repository.ImageRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +34,18 @@ public class PostService {
     private UserRepository userRepository;
     @Autowired
     private FollowRepository followRepository;
+    @Autowired
+    private ImageRepository imageRepository;
 
 
     @Transactional
     public PostResponseDto create(AuthUser authUser, PostRequestDto dto) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
-                new IllegalArgumentException("대상 유저가 없습니다."));
+                new CustomException(ErrorCode.NOT_FOUND));
         Post post = Post.createPost(dto, user);
         Post savedPost = postRepository.save(post);
+        Image image = new Image(dto.getImage(), "post", user, post);
+        imageRepository.save(image);
 
         return new PostResponseDto(
                 savedPost.getId(),
@@ -53,7 +59,8 @@ public class PostService {
     }
 
     public PostResponseDto getpost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(() ->
+                new NullPointerException("대상 게시글이 없습니다."));
         PostResponseDto responseDto = new PostResponseDto(
                 post.getId(),
                 post.getUser().getId(),

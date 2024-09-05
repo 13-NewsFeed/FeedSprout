@@ -25,7 +25,7 @@ public class LikeController {
     //상태 코드를 넣어야 되나?
     @PostMapping("/posts/{postId}/comments/{commentId}/likes")
     public  ResponseEntity<LikeResponseDto> commentLike
-            (@PathVariable(name = "postId") Long postId, @PathVariable(name = "commentId") Long commentId, Long userId){
+            (@PathVariable(name = "commentId") Long commentId, Long userId){
 
         LikeResponseDto response = likeService.commentLike(userId,commentId);
 
