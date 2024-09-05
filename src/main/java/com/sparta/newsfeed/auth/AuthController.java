@@ -6,6 +6,8 @@ import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
+import com.sparta.newsfeed.user.repository.ImageRepository;
+import com.sparta.newsfeed.user.repository.UserRepository;
 import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import com.sparta.newsfeed.user.service.UserService;
@@ -25,8 +27,9 @@ public class AuthController {
 
     private final AuthService loginService;
     private final UserService userService;
-    private final AuthService authService;
     private final UserRepository userRepository;
+    private final ImageRepository imageRepository;
+    private final AuthService authService;
 
 
     // 프로필 생성
