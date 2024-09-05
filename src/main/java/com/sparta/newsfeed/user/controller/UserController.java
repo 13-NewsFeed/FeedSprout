@@ -111,4 +111,22 @@ public class UserController {
         userFeatureService.updateFollowState(followerId, authUser.getId(), state);
         return ResponseEntity.ok().build();
     }
+
+    // 북마크 전체 조회
+    @GetMapping("/bookmarks")
+    public ResponseEntity<?> getBookmarks(AuthUser authUser) {
+
+        return ResponseEntity.ok(userFeatureService.getBookmarks(authUser.getId()));
+    }
+
+    @GetMapping("/bookmarks/{bookmarkId}")
+    public ResponseEntity<?> getBookmark(AuthUser authUser, @PathVariable Long bookmarkId) {
+
+        return ResponseEntity.ok(userFeatureService.getBookmark(authUser.getId(), bookmarkId));
+    }
+
+    @DeleteMapping("/bookmarks/{bookmarkId}")
+    public ResponseEntity<?> deleteBookmark(AuthUser authUser, @PathVariable Long bookmarkId) {
+        return ResponseEntity.ok(userFeatureService.deleteBookmark(authUser.getId(), bookmarkId));
+    }
 }

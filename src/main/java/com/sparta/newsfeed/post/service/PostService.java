@@ -9,8 +9,11 @@ import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.post.repository.PostRepository;
+import com.sparta.newsfeed.user.dto.BookmarkResponseDto;
+import com.sparta.newsfeed.user.entity.Bookmark;
 import com.sparta.newsfeed.user.entity.Image;
 import com.sparta.newsfeed.user.entity.User;
+import com.sparta.newsfeed.user.repository.BookmarkRepository;
 import com.sparta.newsfeed.user.repository.ImageRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -34,6 +37,8 @@ public class PostService {
     private FollowRepository followRepository;
     @Autowired
     private ImageRepository imageRepository;
+    @Autowired
+    private BookmarkRepository bookmarkRepository;
 
 
     @Transactional
@@ -68,6 +73,17 @@ public class PostService {
                 post.getModifiedAt()
         );
         return responseDto;
+    }
+
+    public BookmarkResponseDto createBookmark(Long userId, Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
+
+        Bookmark bookmark = new Bookmark(user, post);
+
+        Bookmark savedBookmark = bookmarkRepository.save(bookmark);
+
+        return new BookmarkResponseDto(savedBookmark, "북마크 저장. 성공적.");
     }
 
 
