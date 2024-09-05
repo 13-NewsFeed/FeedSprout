@@ -27,7 +27,6 @@ public class PostController {
     @PostMapping("/posts")      // userId 게시글 작성
     public ResponseEntity<PostResponseDto> create(
             AuthUser authUser, @RequestBody PostRequestDto dto) {
-
         try {
             PostResponseDto response = postService.create(authUser, dto);
             return ResponseEntity.ok(response);
@@ -37,7 +36,6 @@ public class PostController {
         } catch(Exception e) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @GetMapping("/posts/{postId}")       // 게시글 단건 조회

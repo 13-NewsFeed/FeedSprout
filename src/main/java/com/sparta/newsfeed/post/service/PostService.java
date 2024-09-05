@@ -4,13 +4,12 @@ package com.sparta.newsfeed.post.service;
 import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
+import com.sparta.newsfeed.follow.repository.FollowRepository;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
-import com.sparta.newsfeed.user.entity.Follow;
-import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.post.repository.PostRepository;
-import com.sparta.newsfeed.user.repository.FollowRepository;
+import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -37,7 +35,7 @@ public class PostService {
     @Transactional
     public PostResponseDto create(AuthUser authUser, PostRequestDto dto) {
         User user = userRepository.findById(authUser.getId()).orElseThrow(() ->
-                new IllegalArgumentException("대상 유저가 없습니다."));
+                new CustomException(ErrorCode.NOT_FOUND));
         Post post = Post.createPost(dto, user);
         Post savedPost = postRepository.save(post);
 
@@ -126,7 +124,7 @@ public class PostService {
 
     @Transactional
     public PostResponseDto update(Long postId, PostRequestDto dto) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         post.update(
                 dto.getTitle(),
                 dto.getContents()
@@ -145,7 +143,7 @@ public class PostService {
 
     @Transactional
     public PostResponseDto delete(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         postRepository.delete(post);
         return new PostResponseDto(
                 post.getId(),
