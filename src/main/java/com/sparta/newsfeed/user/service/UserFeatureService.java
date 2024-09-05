@@ -2,21 +2,17 @@ package com.sparta.newsfeed.user.service;
 
 import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
-import com.sparta.newsfeed.post.entity.Post;
-import com.sparta.newsfeed.user.dto.FollowResponseDto;
-import com.sparta.newsfeed.user.dto.UserResponseDto;
-import com.sparta.newsfeed.user.entity.Follow;
-import com.sparta.newsfeed.user.entity.FollowState;
+import com.sparta.newsfeed.follow.dto.FollowResponseDto;
+import com.sparta.newsfeed.follow.entity.Follow;
+import com.sparta.newsfeed.follow.entity.FollowState;
+import com.sparta.newsfeed.follow.repository.FollowRepository;
 import com.sparta.newsfeed.user.entity.User;
-import com.sparta.newsfeed.user.repository.FollowRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +46,7 @@ public class UserFeatureService {
     }
 
 
-    // 나한테 팔로우 건 애들 가져오기
+    // 나랑 팔로우인 애들 가져오기
     public List<String> getFollowers(Long userId) {
         User user = userRepository.findById(userId).
                 orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));

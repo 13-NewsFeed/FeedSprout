@@ -8,6 +8,8 @@ import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
 import com.sparta.newsfeed.user.repository.ImageRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
+import com.sparta.newsfeed.user.entity.User;
+import com.sparta.newsfeed.user.repository.UserRepository;
 import com.sparta.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import static com.sparta.newsfeed.config.exception.ErrorCode.BAD_REQUEST;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -23,9 +27,9 @@ public class AuthController {
 
     private final AuthService loginService;
     private final UserService userService;
-    private final AuthService authService;
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
+    private final AuthService authService;
 
 
     // 프로필 생성
@@ -52,16 +56,16 @@ public class AuthController {
 
         try {
             LoginResponseDto loginResponseDto = loginService.login(loginRequestDto);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add("Authorization", loginResponseDto.getToken());
+            return ResponseEntity.ok().headers(httpHeaders).body(loginResponseDto);
 
-            if(loginResponseDto != null) {
-                HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.add("Authorization", loginResponseDto.getToken());
-                return ResponseEntity.ok().headers(httpHeaders).body(loginResponseDto);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
-            }
+        } catch (CustomException e){
+            throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred during login");
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }

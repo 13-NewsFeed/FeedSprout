@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -25,12 +27,23 @@ public class Comment extends Timestamped{
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Comment(String contents, Post post, User user) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> replyComments;
+
+    private Long depth;
+
+    public Comment(String contents, Post post, User user, Comment parent, List<Comment> replys) {
         this.contents = contents;
         this.post = post;
         this.user = user;
+        this.parent = parent;
+        this.replyComments = replys;
+        this.depth +=1;
     }
-
 
     public void update(String contents){
         this.contents = contents;

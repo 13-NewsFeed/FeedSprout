@@ -6,6 +6,8 @@ import com.sparta.newsfeed.auth.strategy.PostAuthorization;
 import com.sparta.newsfeed.auth.strategy.ProfileAuthorization;
 import com.sparta.newsfeed.auth.util.JwtUtil;
 import com.sparta.newsfeed.comment.repository.CommentRepository;
+import com.sparta.newsfeed.config.exception.CustomException;
+import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -20,13 +22,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @Order(2)
 @Component
 @RequiredArgsConstructor
-public class authFilter implements Filter {
+public class AuthFilter implements Filter {
 
     private final JwtUtil jwtUtil;
     private final PostRepository postRepository;
@@ -42,7 +43,6 @@ public class authFilter implements Filter {
         String method = httpServletRequest.getMethod();
         String requestURI = httpServletRequest.getRequestURI();
 
-        String a = httpServletRequest.getHeader("Authorization");
 
         if(StringUtils.hasText(requestURI) && (requestURI.startsWith("/auth/"))) {
 
@@ -55,7 +55,7 @@ public class authFilter implements Filter {
 
                 // 토큰 검증
                 if (!jwtUtil.validateToken(tokenValue)) {
-                    throw new IllegalArgumentException("Invalid Token");
+                    throw new CustomException(ErrorCode.UNAUTHORIZED);
                 }
 
                 // 토큰에서 사용자 정보 가져오기
@@ -68,7 +68,7 @@ public class authFilter implements Filter {
                 filterChain.doFilter(request, response);
 
             } else {
-                throw new IllegalArgumentException("Not Found Token");
+                throw new CustomException(ErrorCode.UNAUTHORIZED);
             }
         }
     }
@@ -79,32 +79,13 @@ public class authFilter implements Filter {
             Long id = extractResourceId(requestURI);
             boolean result = handlerRequest(requestURI).isAuthorized(info, id);
             if (!result) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+                throw new CustomException(ErrorCode.FORBIDDEN);
             }
         }
     }
 
     private AuthorizationStrategy handlerRequest(String requestURI) throws ServletException, IOException {
         AuthorizationStrategy authStrategy = null;
-
-        /*String start = requestURI.split("/")[1];
-        switch (start) {
-            case "posts": {
-                authStrategy = new PostAuthorization(postRepository);
-                break;
-            }
-            case "comments": {
-                authStrategy = new CommentAuthorization(commentRepository);
-                break;
-            }
-            case "profiles": {
-                authStrategy = new ProfileAuthorization(userRepository);
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException("not found");
-            }
-        }*/
 
         if (requestURI.matches("^/posts/\\d+/comments/\\d+$")) {
             // "/posts/{postId}/comments/{commentId}" 패턴에 매칭
@@ -119,7 +100,7 @@ public class authFilter implements Filter {
             authStrategy = new ProfileAuthorization(userRepository);
 
         } else {
-            throw new IllegalArgumentException("Resource not found");
+            throw new CustomException(ErrorCode.NOT_FOUND);
         }
 
         return authStrategy;

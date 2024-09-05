@@ -19,10 +19,7 @@ public class CommentAuthorization implements AuthorizationStrategy {
     @Override
     public boolean isAuthorized(Claims info, Long commentId) throws ServletException, IOException {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException());
-        System.out.println(comment.getContents());
         User user = comment.getUser();
-        System.out.println("작성자: "+user.getEmail());
-        System.out.println("사용자: "+info.getSubject());
         return user.getEmail().equals(info.getSubject());
     }
 }

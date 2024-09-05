@@ -4,6 +4,8 @@ import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.comment.dto.*;
 import com.sparta.newsfeed.comment.entity.Comment;
 import com.sparta.newsfeed.comment.repository.CommentRepository;
+import com.sparta.newsfeed.config.exception.CustomException;
+import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.entity.User;
@@ -32,18 +34,49 @@ public class CommentService {
     public CommentSaveResponseDto saveComment(Long postId, AuthUser authUser, CommentSaveRequestDto commentSaveRequestDto) {
 
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new RuntimeException("Post not found")
+                () -> new CustomException(ErrorCode.NOT_FOUND)
         );
 
         User user = userRepository.findById(authUser.getId()).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new CustomException(ErrorCode.NOT_FOUND)
         );
 
         Comment newComment = new Comment(
                 commentSaveRequestDto.getContents(),
                 post,
-                user
+                user,
+                null,
+                null
         );
+        Comment savedComment = commentRepository.save(newComment);
+
+        return new CommentSaveResponseDto(
+                savedComment.getId(),
+                savedComment.getContents(),
+                postId,
+                authUser.getId(),
+                savedComment.getCreatedAt(),
+                savedComment.getModifiedAt()
+        );
+    }
+
+    // 대댓글 생성 요청을 받아 저장
+    @Transactional
+    public CommentSaveResponseDto saveReplyComment(Long postId, Long commentId, AuthUser authUser, CommentSaveRequestDto commentSaveRequestDto) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+
+        Comment parent = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("Post not found"));
+
+        User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Comment newComment = new Comment(
+                commentSaveRequestDto.getContents(),
+                post,
+                user,
+                parent,
+                null
+        );
+
         Comment savedComment = commentRepository.save(newComment);
 
         return new CommentSaveResponseDto(
@@ -67,15 +100,19 @@ public class CommentService {
                 () -> new RuntimeException("User not found")
         );
 
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new RuntimeException("Post not found")
+        );
+
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        Page<Comment> comments = commentRepository.findAll(pageable);
+        Page<Comment> comments = commentRepository.findByPostId(postId, pageable);
 
         return comments.map(comment -> new CommentGetAllResponseDto(
                 comment.getId(),
                 comment.getContents(),
-                postId,
-                authUser.getId(),
+                post.getId(),
+                user.getId(),
                 comment.getCreatedAt(),
                 comment.getModifiedAt()
         ));
@@ -89,11 +126,9 @@ public class CommentService {
                 () -> new RuntimeException("Comment not found")
         );
         comment.update(commentUpdateRequestDto.getContents());
-
         return new CommentUpdateResponseDto(
                 commentId,
                 comment.getContents(),
-                comment.getPost(),
                 authUser.getId(),
                 comment.getCreatedAt(),
                 comment.getModifiedAt()

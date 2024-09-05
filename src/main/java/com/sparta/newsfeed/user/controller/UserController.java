@@ -1,18 +1,23 @@
 package com.sparta.newsfeed.user.controller;
 
 import com.sparta.newsfeed.config.exception.CustomException;
+import com.sparta.newsfeed.auth.dto.AuthUser;
+import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
-import com.sparta.newsfeed.user.dto.FollowResponseDto;
+import com.sparta.newsfeed.follow.dto.FollowResponseDto;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
 import com.sparta.newsfeed.user.service.UserFeatureService;
 import com.sparta.newsfeed.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.ListUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @RestController
@@ -23,7 +28,7 @@ public class UserController {
     private final UserFeatureService userFeatureService;
     public Map<String, ErrorCode> errorMap = new HashMap<>();
 
-    public UserController(UserService userService, UserFeatureService userFeatureService) {
+    public UserController(UserService userService, UserFeatureService userFeatureService){
         this.userService = userService;
         this.userFeatureService = userFeatureService;
     }

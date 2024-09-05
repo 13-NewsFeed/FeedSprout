@@ -59,7 +59,7 @@ public class AuthService {
         String password = loginRequestDto.getPassword();
 
         User user = userRepository.findByEmail(email).get();
-        if (userPasswordEncoder.matches(password, user.getPassword())) {
+        if(userPasswordEncoder.matches(password, user.getPassword())) {
 
             String token = jwtUtil.generateAccessToken(user);
             LoginResponseDto loginResponseDto = new LoginResponseDto(token, email);
@@ -68,6 +68,7 @@ public class AuthService {
 
         } else {
             throw new CustomException(ErrorCode.CONFLICT);
+
         }
     }
 }
