@@ -7,12 +7,16 @@ import com.sparta.newsfeed.follow.dto.FollowResponseDto;
 import com.sparta.newsfeed.follow.entity.Follow;
 import com.sparta.newsfeed.follow.entity.FollowState;
 import com.sparta.newsfeed.follow.repository.FollowRepository;
+import com.sparta.newsfeed.user.dto.BookmarkResponseDto;
+import com.sparta.newsfeed.user.entity.Bookmark;
 import com.sparta.newsfeed.user.entity.User;
+import com.sparta.newsfeed.user.repository.BookmarkRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +26,7 @@ public class UserFeatureService {
 
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     // 팔로우 걸기, followerId: 팔로우 거는 사람 / followeeId: 팔로우 당하는 사람
     public FollowResponseDto followUser(Long followerId, Long followeeId) {
@@ -108,9 +113,9 @@ public class UserFeatureService {
 
         FollowState currentState = FollowState.WAITING;
 
-        List<String> waitingList = user.getFollowers().stream()
+        List<String> waitingList = user.getFollowees().stream()
                 .filter(follow -> follow.getState() == currentState)
-                .map(follow -> follow.getFollowee().getUsername())
+                .map(follow -> follow.getFollower().getUsername())
                 .toList();
 
         return waitingList;
@@ -133,5 +138,37 @@ public class UserFeatureService {
         follow.setState(currentState);
         followRepository.save(follow);
 
-        }
     }
+
+    public List<BookmarkResponseDto> getBookmarks(Long userId) {
+
+        List<Bookmark> bookmarkList = bookmarkRepository.findByUserId(userId);
+        List<BookmarkResponseDto> bookmarkResponseDtoList = bookmarkList.stream()
+                .map(bookmark -> new BookmarkResponseDto(bookmark, ""))
+                .toList();
+
+        return bookmarkResponseDtoList;
+    }
+
+    public BookmarkResponseDto getBookmark(Long userId, Long bookmarkId) {
+
+        Bookmark bookmark = bookmarkRepository.findById(bookmarkId).get();
+        if(bookmark.getUser().getId() != userId) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        return new BookmarkResponseDto(bookmark, "북마크 찾기 성공적");
+    }
+
+    public String deleteBookmark(Long userId, Long bookmarkId) {
+        Bookmark bookmark = bookmarkRepository.findById(bookmarkId).get();
+        if(bookmark.getUser().getId() != userId) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        bookmarkRepository.delete(bookmark);
+
+        return "북마크 삭제";
+    }
+
+}
