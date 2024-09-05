@@ -34,13 +34,16 @@ public class Comment extends Timestamped{
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> replyComments;
 
-    public Comment(String contents, Post post, User user, Comment parent) {
+    private Long depth;
+
+    public Comment(String contents, Post post, User user, Comment parent, List<Comment> replys) {
         this.contents = contents;
         this.post = post;
         this.user = user;
         this.parent = parent;
+        this.replyComments = replys;
+        this.depth +=1;
     }
-
 
     public void update(String contents){
         this.contents = contents;

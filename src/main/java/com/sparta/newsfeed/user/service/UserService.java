@@ -2,6 +2,8 @@ package com.sparta.newsfeed.user.service;
 
 import com.sparta.newsfeed.auth.util.PasswordUtils;
 import com.sparta.newsfeed.config.UserPasswordEncoder;
+import com.sparta.newsfeed.config.exception.CustomException;
+import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
 import com.sparta.newsfeed.user.entity.User;
@@ -16,27 +18,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserPasswordEncoder userPasswordEncoder;
-
-/*    // 프로필 생성
-    @Transactional
-    public UserResponseDto createProfile(UserRequestDto requestDto) {
-        if (requestDto.getEmail() == null || requestDto.getUsername() == null) {
-            throw new IllegalArgumentException("Email과 nickname은 필수입니다.");
-        }
-        // 이메일 중복 체크.
-        if (userRepository.existsByEmail(requestDto.getEmail())) {
-            throw new IllegalArgumentException("이미 사용하고 있는 Email 입니다.");
-        }
-
-        // 비밀번호 인코딩
-        String encodedPassword = userPasswordEncoder.encode(requestDto.getPassword());
-
-        User user = new User(requestDto, encodedPassword);
-
-        User savedUser = userRepository.save(user);
-
-        return new UserResponseDto(savedUser);
-    }*/
 
 
     // 회원 탈퇴
@@ -79,7 +60,7 @@ public class UserService {
         // 이메일 업데이트
         if (requestDto.getEmail() != null) {
             if (userRepository.existsByEmail(requestDto.getEmail())) {
-                throw new IllegalArgumentException("이미 사용하고 있는 Email 입니다.");
+                throw new CustomException(ErrorCode.FORBIDDEN);
             }
             user.setEmail(requestDto.getEmail());
         }
@@ -96,7 +77,7 @@ public class UserService {
 
         // 현재 비밀번호와 새로운 비밀번호가 같은 경우
         if (user.getPassword().equals(requestDto.getNewPassword())) {
-            throw new IllegalArgumentException("현재 비밀번호와 동일한 비밀번호로 변경할 수 없습니다.");
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         // 새로운 비밀번호 인코딩

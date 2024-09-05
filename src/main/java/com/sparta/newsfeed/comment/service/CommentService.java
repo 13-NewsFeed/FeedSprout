@@ -43,6 +43,7 @@ public class CommentService {
                 commentSaveRequestDto.getContents(),
                 post,
                 user,
+                null,
                 null
         );
         Comment savedComment = commentRepository.save(newComment);
@@ -70,7 +71,8 @@ public class CommentService {
                 commentSaveRequestDto.getContents(),
                 post,
                 user,
-                parent
+                parent,
+                null
         );
 
         Comment savedComment = commentRepository.save(newComment);

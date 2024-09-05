@@ -1,6 +1,6 @@
-package com.sparta.newsfeed.user.dto;
+package com.sparta.newsfeed.follow.dto;
 
-import com.sparta.newsfeed.user.entity.Follow;
+import com.sparta.newsfeed.follow.entity.Follow;
 import lombok.Getter;
 
 @Getter
