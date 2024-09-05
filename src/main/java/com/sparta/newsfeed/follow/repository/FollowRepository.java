@@ -16,12 +16,12 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     boolean existsByFollowerIdAndFolloweeId(Long followerId, Long followeeId);
     List<Long> findFolloweeIdsByFollowerId(Long followerId);
 
-    // 나와 팔로우인 애들의 게시물 가져오기
+  /*  // 나와 팔로우인 애들의 게시물 가져오기
     @Query("SELECT post FROM Post post WHERE post.user IN (" +
             "SELECT follow.followee FROM Follow follow WHERE follow.follower = :user " +
             "UNION " +
             "SELECT follow.follower FROM Follow follow WHERE follow.followee = :user)")
-    List<Post> findPostsByFollowingOrFollowers(@Param("user") User user);
+    List<Post> findPostsByFollowingOrFollowers(@Param("user") User user);*/
 }
 
 

@@ -31,8 +31,10 @@ public class Image {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    public Image(String imageUrl, User user) {
+    public Image(String imageUrl, String category, User user, Post post) {
         this.imageUrl = imageUrl;
+        this.category = category;
         this.user = user;
+        this.post = post;
     }
 }

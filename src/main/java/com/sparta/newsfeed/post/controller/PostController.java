@@ -25,64 +25,52 @@ public class PostController {
     private PostService postService;
 
     @PostMapping("/posts")      // userId 게시글 작성
-    public ResponseEntity<PostResponseDto> create(
-            AuthUser authUser, @RequestBody PostRequestDto dto) {
-        try {
-            PostResponseDto response = postService.create(authUser, dto);
-            return ResponseEntity.ok(response);
+    public ResponseEntity<PostResponseDto> create(AuthUser authUser, @RequestBody PostRequestDto dto) {
 
-        } catch (CustomException e) {
-            throw new CustomException(ErrorCode.BAD_REQUEST); // 요청이 잘못됬다.
-        } catch(Exception e) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        PostResponseDto response = postService.create(authUser, dto);
+        return ResponseEntity.ok(response);
+
     }
 
     @GetMapping("/posts/{postId}")       // 게시글 단건 조회
     public ResponseEntity<PostResponseDto> getPost(@PathVariable Long postId) {
+
         PostResponseDto response = postService.getpost(postId);
         return ResponseEntity.ok(response);
+
     }
 
     @GetMapping("/posts/editedDate")       // 게시글 조회 (수정일자 내림차순)
-    public ResponseEntity<List<PostResponseDto>> getPostsByTime(
-            AuthUser authUser,
-            @RequestParam(defaultValue = "0", required = false) int pageNo,
-            @RequestParam(defaultValue = "10", required = false) int pageSize
-    ) {
+    public ResponseEntity<List<PostResponseDto>> getPostsByTime(AuthUser authUser,
+                                                                @RequestParam(defaultValue = "0", required = false) int pageNo,
+                                                                @RequestParam(defaultValue = "10", required = false) int pageSize) {
         List<PostResponseDto> response = postService.getPostsByTime(authUser, pageNo, pageSize);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/posts/like")       // 게시글 조회 (좋아요 많은순 내림차순)
-    public ResponseEntity<List<PostResponseDto>> getPostsByLikes(
-            AuthUser authUser,
-            @RequestParam(defaultValue = "0", required = false) int pageNo,
-            @RequestParam(defaultValue = "10", required = false) int pageSize
-    ) {
+    public ResponseEntity<List<PostResponseDto>> getPostsByLikes(AuthUser authUser,
+                                                                 @RequestParam(defaultValue = "0", required = false) int pageNo,
+                                                                 @RequestParam(defaultValue = "10", required = false) int pageSize) {
         List<PostResponseDto> response = postService.getPostsByLikes(authUser, pageNo, pageSize);
         return ResponseEntity.ok(response);
     }
 
 
     @GetMapping("/posts/follows/posts")      // 팔로우 한 사람들 게시글 모두 조회
-    public ResponseEntity<List<PostResponseDto>> getPostsByFollowUsers(
-            AuthUser authUser,
-            @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "10") int pageSize
-    ) {
+    public ResponseEntity<List<PostResponseDto>> getPostsByFollowUsers(AuthUser authUser,
+                                                                       @RequestParam(defaultValue = "0") int pageNo,
+                                                                       @RequestParam(defaultValue = "10") int pageSize) {
         List<PostResponseDto> response = postService.getPostsByFollowedUsers(authUser, pageNo, pageSize);
         return ResponseEntity.ok(response);
     }
 
 
     @GetMapping("/posts/follows/{followeeId}/posts")      // 팔로우 한 사람 한명 게시글 모두 조회
-    public ResponseEntity<List<PostResponseDto>> getPostsByFollowedUser(
-            AuthUser authUser,
-            @PathVariable Long followeeId,
-            @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "10") int pageSize
-    ) {
+    public ResponseEntity<List<PostResponseDto>> getPostsByFollowedUser(AuthUser authUser,
+                                                                        @PathVariable Long followeeId,
+                                                                        @RequestParam(defaultValue = "0") int pageNo,
+                                                                        @RequestParam(defaultValue = "10") int pageSize) {
         List<PostResponseDto> response = postService.getPostsByFollowedUser(authUser, followeeId, pageNo, pageSize);
         return ResponseEntity.ok(response);
     }

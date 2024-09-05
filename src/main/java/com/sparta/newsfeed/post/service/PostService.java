@@ -4,12 +4,15 @@ package com.sparta.newsfeed.post.service;
 import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
-import com.sparta.newsfeed.follow.repository.FollowRepository;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
-import com.sparta.newsfeed.post.repository.PostRepository;
+import com.sparta.newsfeed.follow.entity.Follow;
+import com.sparta.newsfeed.user.entity.Image;
 import com.sparta.newsfeed.user.entity.User;
+import com.sparta.newsfeed.post.repository.PostRepository;
+import com.sparta.newsfeed.follow.repository.FollowRepository;
+import com.sparta.newsfeed.user.repository.ImageRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -30,6 +34,8 @@ public class PostService {
     private UserRepository userRepository;
     @Autowired
     private FollowRepository followRepository;
+    @Autowired
+    private ImageRepository imageRepository;
 
 
     @Transactional
@@ -38,6 +44,8 @@ public class PostService {
                 new CustomException(ErrorCode.NOT_FOUND));
         Post post = Post.createPost(dto, user);
         Post savedPost = postRepository.save(post);
+        Image image = new Image(dto.getImage(), "post", user, post);
+        imageRepository.save(image);
 
         return new PostResponseDto(
                 savedPost.getId(),
@@ -51,7 +59,8 @@ public class PostService {
     }
 
     public PostResponseDto getpost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(() ->
+                new NullPointerException("대상 게시글이 없습니다."));
         PostResponseDto responseDto = new PostResponseDto(
                 post.getId(),
                 post.getUser().getId(),
@@ -124,7 +133,7 @@ public class PostService {
 
     @Transactional
     public PostResponseDto update(Long postId, PostRequestDto dto) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         post.update(
                 dto.getTitle(),
                 dto.getContents()
@@ -143,7 +152,7 @@ public class PostService {
 
     @Transactional
     public PostResponseDto delete(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
         postRepository.delete(post);
         return new PostResponseDto(
                 post.getId(),

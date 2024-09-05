@@ -34,7 +34,7 @@ public class Post extends Timestamped {
     private User user;
 
     // 이미지와의 일대일 단방향 관계
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
