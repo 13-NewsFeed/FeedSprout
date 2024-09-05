@@ -1,15 +1,8 @@
 package com.sparta.newsfeed.auth.strategy;
 
-import com.sparta.newsfeed.comment.entity.Comment;
-import com.sparta.newsfeed.comment.repository.CommentRepository;
-import com.sparta.newsfeed.follow.ExistsFollow;
-import com.sparta.newsfeed.follow.entity.Follow;
 import com.sparta.newsfeed.follow.repository.FollowRepository;
-import com.sparta.newsfeed.user.entity.User;
-import com.sparta.newsfeed.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.ServletException;
-
 import java.io.IOException;
 
 public class FollowAuthorization implements AuthorizationStrategy {

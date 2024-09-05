@@ -15,9 +15,10 @@ public enum FollowState {
     public String getState() {
         return state;
     }
+
     public static class State {
-        public static final String FOLLOWING = "following";
-        public static final String WAITING = "waiting";
-        public static final String BLOCKED = "blocked";
+        public static final String FOLLOWING = "FOLLOWING";
+        public static final String WAITING = "WAITING";
+        public static final String BLOCKED = "BLOCKED";
     }
 }

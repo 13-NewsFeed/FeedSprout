@@ -22,7 +22,7 @@ public class AuthService {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-    private UserPasswordEncoder userPasswordEncoder;
+    private final UserPasswordEncoder userPasswordEncoder;
 
 
     // 프로필 생성
@@ -37,9 +37,10 @@ public class AuthService {
                 }
 
                 User user = new User(requestDto);
-
-                Image image = new Image(requestDto.getProfileImageUrl(),"PROFILE", user, null);
-                user.setProfileImage(image);
+                if (requestDto.getProfileImageUrl() != null) {
+                    Image image = new Image(requestDto.getProfileImageUrl(),"PROFILE", user, null);
+                    user.setProfileImage(image);
+                }
 
                 String password = userPasswordEncoder.encode(user.getPassword());
                 user.setPassword(password);

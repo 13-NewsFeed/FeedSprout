@@ -1,6 +1,7 @@
 package com.sparta.newsfeed.user.controller;
 
 import com.sparta.newsfeed.auth.dto.AuthUser;
+import com.sparta.newsfeed.config.Auth;
 import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.follow.dto.FollowResponseDto;
@@ -75,11 +76,10 @@ public class UserController {
     }
 
     // 팔로워 삭제
-    @DeleteMapping("/follows/{followerId}")
-    public ResponseEntity<String> deleteFollower(AuthUser authUser,
-                                                 @PathVariable Long followerId) {
+    @DeleteMapping("/follows/{id}")
+    public ResponseEntity<String> deleteFollower(AuthUser authUser, @PathVariable Long id) {
         try {
-            userFeatureService.deleteFollower(followerId, authUser.getId());
+            userFeatureService.deleteFollower(authUser.getId(), id);
             return ResponseEntity.ok("팔로워가 성공적으로 삭제되었습니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -89,7 +89,7 @@ public class UserController {
 
     // 나한테 팔로우 건 애들, 내가 팔로우 건 애들 가져오기
     @GetMapping("/follows/followingList")
-    public ResponseEntity<List<String>> getFollowers(AuthUser authUser){
+    public ResponseEntity<List<String>> getFollowers(AuthUser authUser) {
         List<String> followers = userFeatureService.getFollowers(authUser.getId());
         List<String> followees = userFeatureService.getFollowees(authUser.getId());
         List<String> follows = Stream.concat(followers.stream(), followees.stream()).toList();
@@ -98,16 +98,16 @@ public class UserController {
 
 
     // 팔로우 대기목록 확인
-    @PutMapping("/follows/waitingList")
+    @GetMapping("/follows/waitingFollowers")
     public ResponseEntity<List<String>> getWaitingFollowers(AuthUser authUser){
         List<String> waitingFollowers = userFeatureService.getWaitingFollowers(authUser.getId());
         return ResponseEntity.ok(waitingFollowers);
     }
 
     // 팔로우 승낙 혹은 거절하기
-    @PostMapping("/follows/waitingList/{followerId}")
+    @PostMapping("/follows/waitingFollowers/{followerId}")
     public ResponseEntity<Void> updateFollowState(
-            AuthUser authUser, @PathVariable Long followerId, @RequestBody String state) {
+            AuthUser authUser, @PathVariable Long followerId, @RequestParam String state) {
         userFeatureService.updateFollowState(followerId, authUser.getId(), state);
         return ResponseEntity.ok().build();
     }
