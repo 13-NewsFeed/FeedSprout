@@ -100,15 +100,19 @@ public class CommentService {
                 () -> new RuntimeException("User not found")
         );
 
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new RuntimeException("Post not found")
+        );
+
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        Page<Comment> comments = commentRepository.findAll(pageable);
+        Page<Comment> comments = commentRepository.findByPostId(postId, pageable);
 
         return comments.map(comment -> new CommentGetAllResponseDto(
                 comment.getId(),
                 comment.getContents(),
-                postId,
-                authUser.getId(),
+                post.getId(),
+                user.getId(),
                 comment.getCreatedAt(),
                 comment.getModifiedAt()
         ));
