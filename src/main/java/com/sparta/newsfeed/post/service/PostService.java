@@ -4,14 +4,13 @@ package com.sparta.newsfeed.post.service;
 import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
+import com.sparta.newsfeed.follow.repository.FollowRepository;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
-import com.sparta.newsfeed.follow.entity.Follow;
+import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.entity.Image;
 import com.sparta.newsfeed.user.entity.User;
-import com.sparta.newsfeed.post.repository.PostRepository;
-import com.sparta.newsfeed.follow.repository.FollowRepository;
 import com.sparta.newsfeed.user.repository.ImageRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service

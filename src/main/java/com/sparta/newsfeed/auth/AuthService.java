@@ -15,34 +15,40 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-    private final UserPasswordEncoder userPasswordEncoder;
+    private UserPasswordEncoder userPasswordEncoder;
+
 
     // 프로필 생성
     @Transactional
     public UserResponseDto register(UserRequestDto requestDto) {
-        if (requestDto.getEmail() == null || requestDto.getUsername() == null) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
-        // 이메일 중복 체크.
-        if(userRepository.existsByEmail(requestDto.getEmail())){
-            throw new CustomException(ErrorCode.CONFLICT);
-        }
+                if (requestDto.getEmail() == null || requestDto.getUsername() == null) {
+                    throw new CustomException(ErrorCode.BAD_REQUEST);
+                }
+                // 이메일 중복 체크.
+                if (userRepository.existsByEmail(requestDto.getEmail())) {
+                    throw new CustomException(ErrorCode.CONFLICT);
+                }
 
-        User user = new User(requestDto);
+                User user = new User(requestDto);
 
-        String password = userPasswordEncoder.encode(user.getPassword());
-        user.setPassword(password);
-        User savedUser = userRepository.save(user);
+                Image image = new Image(requestDto.getProfileImageUrl(),"PROFILE", user, null);
+                user.setProfileImage(image);
 
-        return new UserResponseDto(savedUser);
+                String password = userPasswordEncoder.encode(user.getPassword());
+                user.setPassword(password);
+                User savedUser = userRepository.save(user);
+
+                return new UserResponseDto(savedUser);
 
     }
+
 
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         if (loginRequestDto.getEmail() == null) {
@@ -62,6 +68,7 @@ public class AuthService {
 
         } else {
             throw new CustomException(ErrorCode.CONFLICT);
+
         }
     }
 }

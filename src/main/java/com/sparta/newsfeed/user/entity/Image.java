@@ -18,13 +18,14 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "imageUrl")
     private String imageUrl;
+
     @Column
     private String category;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @OneToOne(mappedBy = "profileImage")
     private User user;
 
     @ManyToOne

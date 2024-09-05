@@ -62,8 +62,9 @@ public class User extends TimeStamp {
 
 
     // 이미지와의 일대일 단방향 관계
-    @OneToMany(mappedBy = "user")
-    private List<Image> images;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "image_id")
+    private Image profileImage;
 
     public User(UserRequestDto requestDto){
 

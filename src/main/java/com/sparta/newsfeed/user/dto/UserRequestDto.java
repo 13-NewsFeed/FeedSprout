@@ -14,6 +14,5 @@ public class UserRequestDto {
     private String NewPassword;
     private String NewConfirmPassword;
     private String username;
-
-
+    private String profileImageUrl;
 }
