@@ -4,6 +4,7 @@ package com.sparta.newsfeed.post.entity;
 import com.sparta.newsfeed.comment.entity.Comment;
 import com.sparta.newsfeed.like.entity.Like;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
+import com.sparta.newsfeed.user.entity.Image;
 import com.sparta.newsfeed.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,10 +33,14 @@ public class Post extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
+    // 이미지와의 일대일 단방향 관계
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes;
 
-  
+
     public static Post createPost(PostRequestDto dto, User user) {
         return new Post(
                 user,

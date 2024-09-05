@@ -55,14 +55,15 @@ public class User extends TimeStamp {
     private List<Like> commentLikesList = new ArrayList<>();
 
 
-/*    // 북마크와의 일대다 관계(북마크가 하나의 유저만 참조, 북마크 공유가 제한?)
+    // 북마크와의 일대다 관계(북마크가 하나의 유저만 참조, 북마크 공유가 제한?)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bookmark> bookmarkList = new ArrayList<>();
 
 
     // 이미지와의 일대일 단방향 관계
-    @OneToOne(mappedBy = "imageUrl")
-    private Image image;*/
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "image_id")
+    private Image profileImage;
 
     public User(UserRequestDto requestDto){
 
