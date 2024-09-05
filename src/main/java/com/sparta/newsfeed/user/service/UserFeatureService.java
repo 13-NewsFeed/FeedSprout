@@ -2,6 +2,7 @@ package com.sparta.newsfeed.user.service;
 
 import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
+import com.sparta.newsfeed.follow.ExistsFollow;
 import com.sparta.newsfeed.follow.dto.FollowResponseDto;
 import com.sparta.newsfeed.follow.entity.Follow;
 import com.sparta.newsfeed.follow.entity.FollowState;
@@ -13,6 +14,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,10 @@ public class UserFeatureService {
 
     // 팔로우 걸기, followerId: 팔로우 거는 사람 / followeeId: 팔로우 당하는 사람
     public FollowResponseDto followUser(Long followerId, Long followeeId) {
+        if (followerId == followeeId) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
         User follower = userRepository.findById(followerId).
                 orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         User followee = userRepository.findById(followeeId).
@@ -31,16 +37,33 @@ public class UserFeatureService {
         FollowState currentState = FollowState.WAITING;
 
         Follow follow = new Follow(currentState, follower, followee);
-        Follow savedFollow = followRepository.save(follow);
 
+        ExistsFollow existsFollow = new ExistsFollow(followRepository);
+
+        if (existsFollow.isFollowing(followerId, followeeId)) {
+            throw new CustomException(ErrorCode.CONFLICT);
+        }
+
+        Follow savedFollow = followRepository.save(follow);
         return new FollowResponseDto(savedFollow);
+
     }
 
 
     // 팔로우 삭제
     public void deleteFollower(Long followerId, Long followeeId) {
-        Follow follow = followRepository.findByFollowerIdAndFolloweeId(followerId, followeeId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        Boolean flag1 = followRepository.existsByFollowerIdAndFolloweeId(followerId, followeeId);
+        Boolean flag2 = followRepository.existsByFollowerIdAndFolloweeId(followeeId, followerId);
+
+        Follow follow = null;
+
+        if (flag1) {
+            follow = followRepository.findByFollowerIdAndFolloweeIdAndState(followerId, followeeId, FollowState.FOLLOWING).get();
+        } else if (flag2) {
+            follow = followRepository.findByFollowerIdAndFolloweeIdAndState(followeeId, followerId, FollowState.FOLLOWING).get();
+        } else {
+            throw new CustomException(ErrorCode.NOT_FOUND);
+        }
 
         followRepository.delete(follow);
     }
@@ -55,9 +78,9 @@ public class UserFeatureService {
 
         List<String> followerList = user.getFollowers().stream()
                 .filter(follow -> follow.getState() == currentState)
-                .map(follow -> follow.getFollower().getUsername())
+                .map(follow -> follow.getFollowee().getUsername())
                 .toList();
-
+        System.out.println(followerList);
         return followerList;
     }
 
@@ -71,9 +94,9 @@ public class UserFeatureService {
 
         List<String> followeeList = user.getFollowees().stream()
                 .filter(follow -> follow.getState() == currentState)
-                .map(follow -> follow.getFollowee().getUsername())
+                .map(follow -> follow.getFollower().getUsername())
                 .toList();
-
+        System.out.println(followeeList);
         return followeeList;
     }
 
@@ -87,7 +110,7 @@ public class UserFeatureService {
 
         List<String> waitingList = user.getFollowers().stream()
                 .filter(follow -> follow.getState() == currentState)
-                .map(follow -> follow.getFollower().getUsername())
+                .map(follow -> follow.getFollowee().getUsername())
                 .toList();
 
         return waitingList;
@@ -97,7 +120,7 @@ public class UserFeatureService {
     // 팔로우 승낙 혹은 거절하기
     public void updateFollowState(Long followerId, Long followeeId, String state) {
 
-        Follow follow = followRepository.findByFollowerIdAndFolloweeId(followerId, followeeId)
+        Follow follow = followRepository.findByFollowerIdAndFolloweeIdAndState(followerId, followeeId, FollowState.WAITING)
                     .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
         FollowState currentState;

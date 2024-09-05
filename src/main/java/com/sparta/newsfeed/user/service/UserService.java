@@ -73,23 +73,24 @@ public class UserService {
 
 
         // 비밀번호 업데이트
-        // 새로운 비빌번호와 새로운 비밀번호 재확인
-        if (!requestDto.getNewPassword().equals(requestDto.getNewConfirmPassword())) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
+        if (requestDto.getNewPassword() != null) {
+            // 새로운 비빌번호와 새로운 비밀번호 재확인
+            if (!requestDto.getNewPassword().equals(requestDto.getNewConfirmPassword())) {
+                throw new CustomException(ErrorCode.BAD_REQUEST);
+            }
+
+            // 새로운 비밀번호 형식 검증
+            PasswordUtils.checkPasswordFormat(requestDto.getNewPassword());
+
+            // 현재 비밀번호와 새로운 비밀번호가 같은 경우
+            if (user.getPassword().equals(requestDto.getNewPassword())) {
+                throw new CustomException(ErrorCode.BAD_REQUEST);
+            }
+
+            // 새로운 비밀번호 인코딩
+            String encodeNewPassword = userPasswordEncoder.encode(requestDto.getNewPassword());
+            user.setPassword(encodeNewPassword);
         }
-
-        // 새로운 비밀번호 형식 검증
-        PasswordUtils.checkPasswordFormat(requestDto.getNewPassword());
-
-        // 현재 비밀번호와 새로운 비밀번호가 같은 경우
-        if (user.getPassword().equals(requestDto.getNewPassword())) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
-
-        // 새로운 비밀번호 인코딩
-        String encodeNewPassword = userPasswordEncoder.encode(requestDto.getNewPassword());
-        user.setPassword(encodeNewPassword);
-
 
         // 사용자 저장
         User savedUser = userRepository.save(user);

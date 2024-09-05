@@ -24,6 +24,9 @@ public class UserResponseDto {
         this.username = user.getUsername();
         this.createdAt = user.getCreatedAt();
         this.modifiedAt = user.getModifiedAt();
-        this.profileImageUrl = user.getProfileImage().getImageUrl();
+        if (user.getProfileImage() != null) {
+            this.profileImageUrl = user.getProfileImage().getImageUrl();
+        }
+
     }
 }

@@ -41,12 +41,14 @@ public class CommentService {
                 () -> new CustomException(ErrorCode.NOT_FOUND)
         );
 
+
         Comment newComment = new Comment(
                 commentSaveRequestDto.getContents(),
                 post,
                 user,
                 null,
-                null
+                null,
+                0L
         );
         Comment savedComment = commentRepository.save(newComment);
 
@@ -69,12 +71,17 @@ public class CommentService {
 
         User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (3 < parent.getDepth()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
         Comment newComment = new Comment(
                 commentSaveRequestDto.getContents(),
                 post,
                 user,
                 parent,
-                null
+                null,
+                parent.getDepth()+1L
         );
 
         Comment savedComment = commentRepository.save(newComment);
@@ -90,7 +97,7 @@ public class CommentService {
     }
 
     // 특정 게시글의 댓글 전부 조회
-    public Page<CommentGetAllResponseDto> getAllComments(
+    public List<CommentGetAllResponseDto> getAllComments(
             Long postId,
             AuthUser authUser,
             int page,
@@ -106,16 +113,18 @@ public class CommentService {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
+
         Page<Comment> comments = commentRepository.findByPostId(postId, pageable);
 
-        return comments.map(comment -> new CommentGetAllResponseDto(
+        return comments.getContent().stream().map(
+                comment -> new CommentGetAllResponseDto(
                 comment.getId(),
                 comment.getContents(),
-                post.getId(),
-                user.getId(),
+                comment.getPost().getId(),
+                comment.getUser().getId(),
                 comment.getCreatedAt(),
                 comment.getModifiedAt()
-        ));
+        )).toList();
 
     }
 

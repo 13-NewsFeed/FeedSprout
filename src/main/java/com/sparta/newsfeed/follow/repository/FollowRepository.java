@@ -8,9 +8,10 @@ import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
-    Optional<Follow> findByFollowerIdAndFolloweeId(Long followerId, Long followeeId);
+    Optional<Follow> findByFollowerIdAndFolloweeIdAndState(Long followerId, Long followeeId, Enum state);
     boolean existsByFollowerIdAndFolloweeId(Long followerId, Long followeeId);
     List<Long> findFolloweeIdsByFollowerId(Long followerId);
+    List<Long> findFollowerIdsByFolloweeId(Long followeeId);
 
   /*  // 나와 팔로우인 애들의 게시물 가져오기
     @Query("SELECT post FROM Post post WHERE post.user IN (" +

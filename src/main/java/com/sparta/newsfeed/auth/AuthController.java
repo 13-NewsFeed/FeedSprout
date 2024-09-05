@@ -36,17 +36,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequestDto requestDto) {
 
-        try {
-            // 사용자 서비스 호출 생성
-            UserResponseDto userResponseDto = authService.register(requestDto);
-            // 성공적 생성 -> 201 상태 코드로 생성된 사용자를 반환
-            return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
+        // 사용자 서비스 호출 생성
+        UserResponseDto userResponseDto = authService.register(requestDto);
+        // 성공적 생성 -> 201 상태 코드로 생성된 사용자를 반환
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
 
-        } catch (CustomException e){
-            throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
     }
 
 

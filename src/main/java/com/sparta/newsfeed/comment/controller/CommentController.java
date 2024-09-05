@@ -34,7 +34,7 @@ public class CommentController {
 
     // 댓글 조회(전체)
     @GetMapping("/comments")
-    public ResponseEntity<Page<CommentGetAllResponseDto>> getAllComments(
+    public ResponseEntity<List<CommentGetAllResponseDto>> getAllComments(
             @PathVariable(name = "postId") Long postId,
             AuthUser authUser,
             @RequestParam(defaultValue = "1") int page,
