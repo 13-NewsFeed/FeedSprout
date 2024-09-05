@@ -41,7 +41,7 @@ public class LikeService {
              //좋아요가 이미 존재하면 삭제
              likeRepository.delete(like.get());
 
-             return new LikeResponseDto("좋아요 삭제",404);
+             return new LikeResponseDto("좋아요 삭제",200);
          }
     }
 
@@ -63,7 +63,7 @@ public class LikeService {
             return new LikeResponseDto("좋아요",200);
         }else {
             likeRepository.delete(like.get());
-            return new LikeResponseDto("좋아요 취소",404);
+            return new LikeResponseDto("좋아요 취소",200);
         }
     }
     //1) 사용자가 게시글에 좋아요를 누를때 호출

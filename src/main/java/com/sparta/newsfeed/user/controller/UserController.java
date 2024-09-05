@@ -59,21 +59,14 @@ public class UserController {
     public ResponseEntity<UserResponseDto> updateProfile(@PathVariable Long userid,
                                                          @RequestBody UserRequestDto requestDto){
 
-        try {
-            UserResponseDto updatedUser = userService.updateUser(userid, requestDto);
-            // 성공적 수정 : 200 상태 코드로 조회된 사용자 정보를 반환
-            return ResponseEntity.ok(updatedUser);
-        } catch (IllegalArgumentException ex) {
-            // 잘못된 요청 데이터 : 404 코드로 에러 메세지 반환 (문자열로 반환)
-            throw new CustomException(ErrorCode.NOT_FOUND);
-        } catch (Exception ex) {
-            // 서버 오류 : 500 코드로 에러 메세지 반환 (문자열로 반환)
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        UserResponseDto updatedUser = userService.updateUser(userid, requestDto);
+        // 성공적 수정 : 200 상태 코드로 조회된 사용자 정보를 반환
+        return ResponseEntity.ok(updatedUser);
+
     }
 
     // 팔로우 걸기
-    @PostMapping("/profiles/{userId}/follows/{followeeId}")
+    @PostMapping("/follows/{followeeId}")
     public ResponseEntity<FollowResponseDto> followUser(AuthUser user,
                                                         @PathVariable(name = "followeeId") Long followeeId) {
         FollowResponseDto followResponseDto = userFeatureService.followUser(user.getId(), followeeId);
@@ -82,10 +75,11 @@ public class UserController {
     }
 
     // 팔로워 삭제
-    @DeleteMapping("/profiles/{userId}/follows/{id}")
-    public ResponseEntity<String> deleteFollower(@RequestParam Long followerId, @RequestParam Long followeeId) {
+    @DeleteMapping("/follows/{followerId}")
+    public ResponseEntity<String> deleteFollower(AuthUser authUser,
+                                                 @PathVariable Long followerId) {
         try {
-            userFeatureService.deleteFollower(followerId, followeeId);
+            userFeatureService.deleteFollower(followerId, authUser.getId());
             return ResponseEntity.ok("팔로워가 성공적으로 삭제되었습니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -94,27 +88,27 @@ public class UserController {
 
 
     // 나한테 팔로우 건 애들, 내가 팔로우 건 애들 가져오기
-    @GetMapping("/profiles/{userId}/follows")
-    public ResponseEntity<List<String>> getFollowers(@PathVariable Long userId){
-        List<String> followers = userFeatureService.getFollowers(userId);
-        List<String> followees = userFeatureService.getFollowees(userId);
+    @GetMapping("/follows/followingList")
+    public ResponseEntity<List<String>> getFollowers(AuthUser authUser){
+        List<String> followers = userFeatureService.getFollowers(authUser.getId());
+        List<String> followees = userFeatureService.getFollowees(authUser.getId());
         List<String> follows = Stream.concat(followers.stream(), followees.stream()).toList();
         return ResponseEntity.ok(follows);
     }
 
 
     // 팔로우 대기목록 확인
-    @GetMapping("/profiles/{userId}/follows/waitingFollowers")
-    public ResponseEntity<List<String>> getWaitingFollowers(@PathVariable Long userId){
-        List<String> waitingFollowers = userFeatureService.getWaitingFollowers(userId);
+    @PutMapping("/follows/waitingList")
+    public ResponseEntity<List<String>> getWaitingFollowers(AuthUser authUser){
+        List<String> waitingFollowers = userFeatureService.getWaitingFollowers(authUser.getId());
         return ResponseEntity.ok(waitingFollowers);
     }
 
     // 팔로우 승낙 혹은 거절하기
-    @PostMapping("/profiles/{userId}/follows/waitingFollowers/{followerId}")
+    @PostMapping("/follows/waitingList/{followerId}")
     public ResponseEntity<Void> updateFollowState(
-            @PathVariable Long userId, @RequestParam Long followerId, @RequestParam String state) {
-        userFeatureService.updateFollowState(followerId, userId, state);
+            AuthUser authUser, @PathVariable Long followerId, @RequestBody String state) {
+        userFeatureService.updateFollowState(followerId, authUser.getId(), state);
         return ResponseEntity.ok().build();
     }
 }

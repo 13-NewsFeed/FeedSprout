@@ -36,13 +36,13 @@ public class Comment extends Timestamped{
 
     private Long depth;
 
-    public Comment(String contents, Post post, User user, Comment parent, List<Comment> replys) {
+    public Comment(String contents, Post post, User user, Comment parent, List<Comment> replys, Long depth) {
         this.contents = contents;
         this.post = post;
         this.user = user;
         this.parent = parent;
         this.replyComments = replys;
-        this.depth +=1;
+        this.depth = depth;
     }
 
     public void update(String contents){

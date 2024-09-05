@@ -1,13 +1,11 @@
 package com.sparta.newsfeed.auth.filter;
 
-import com.sparta.newsfeed.auth.strategy.AuthorizationStrategy;
-import com.sparta.newsfeed.auth.strategy.CommentAuthorization;
-import com.sparta.newsfeed.auth.strategy.PostAuthorization;
-import com.sparta.newsfeed.auth.strategy.ProfileAuthorization;
+import com.sparta.newsfeed.auth.strategy.*;
 import com.sparta.newsfeed.auth.util.JwtUtil;
 import com.sparta.newsfeed.comment.repository.CommentRepository;
 import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
+import com.sparta.newsfeed.follow.repository.FollowRepository;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -22,6 +20,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Order(2)
@@ -33,6 +33,7 @@ public class AuthFilter implements Filter {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
 
     @Override
     public void doFilter(ServletRequest request,
@@ -95,10 +96,13 @@ public class AuthFilter implements Filter {
             // "/posts/{postId}" 패턴에 매칭
             authStrategy = new PostAuthorization(postRepository);
 
-        } else if (requestURI.matches("^/profiles/\\d*$")) {
-            // "/profiles/{userId}" 패턴에 매칭
+        } else if (requestURI.matches("^/users/profiles/\\d*$")) {
+            // "users/profiles/{userId}" 패턴에 매칭
             authStrategy = new ProfileAuthorization(userRepository);
 
+        } else if (requestURI.matches("^/users/follows/\\d*$")) {
+            // "/follows/{userId}" 패턴에 매칭
+            authStrategy = new FollowAuthorization(followRepository);
         } else {
             throw new CustomException(ErrorCode.NOT_FOUND);
         }
@@ -107,6 +111,7 @@ public class AuthFilter implements Filter {
     }
 
     private Long extractResourceId(String requestURI) {
+
         String[] splits = requestURI.split("/");
         String resourceId = splits[splits.length-1];
         return Long.valueOf(resourceId);

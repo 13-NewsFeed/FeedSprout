@@ -41,12 +41,14 @@ public class CommentService {
                 () -> new CustomException(ErrorCode.NOT_FOUND)
         );
 
+
         Comment newComment = new Comment(
                 commentSaveRequestDto.getContents(),
                 post,
                 user,
                 null,
-                null
+                null,
+                0L
         );
         Comment savedComment = commentRepository.save(newComment);
 
@@ -69,12 +71,17 @@ public class CommentService {
 
         User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (3 < parent.getDepth()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
         Comment newComment = new Comment(
                 commentSaveRequestDto.getContents(),
                 post,
                 user,
                 parent,
-                null
+                null,
+                parent.getDepth()+1L
         );
 
         Comment savedComment = commentRepository.save(newComment);
