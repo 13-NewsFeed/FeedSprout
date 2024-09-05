@@ -133,7 +133,7 @@ public class PostService {
 
     @Transactional
     public PostResponseDto update(Long postId, PostRequestDto dto) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         post.update(
                 dto.getTitle(),
                 dto.getContents()
@@ -152,7 +152,7 @@ public class PostService {
 
     @Transactional
     public PostResponseDto delete(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("대상 게시글이 없습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
         postRepository.delete(post);
         return new PostResponseDto(
                 post.getId(),

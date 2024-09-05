@@ -102,7 +102,7 @@ public class CommentService {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 
-        Page<Comment> comments = commentRepository.findAll(pageable);
+        Page<Comment> comments = commentRepository.findAllByPostId(pageable);
 
         return comments.map(comment -> new CommentGetAllResponseDto(
                 comment.getId(),
