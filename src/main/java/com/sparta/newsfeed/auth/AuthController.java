@@ -6,6 +6,8 @@ import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
 import com.sparta.newsfeed.user.dto.UserRequestDto;
 import com.sparta.newsfeed.user.dto.UserResponseDto;
+import com.sparta.newsfeed.user.repository.ImageRepository;
+import com.sparta.newsfeed.user.repository.UserRepository;
 import com.sparta.newsfeed.user.entity.User;
 import com.sparta.newsfeed.user.repository.UserRepository;
 import com.sparta.newsfeed.user.service.UserService;
@@ -25,25 +27,20 @@ public class AuthController {
 
     private final AuthService loginService;
     private final UserService userService;
-    private final AuthService authService;
     private final UserRepository userRepository;
+    private final ImageRepository imageRepository;
+    private final AuthService authService;
 
 
     // 프로필 생성
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequestDto requestDto) {
 
-        try {
-            // 사용자 서비스 호출 생성
-            UserResponseDto userResponseDto = authService.register(requestDto);
-            // 성공적 생성 -> 201 상태 코드로 생성된 사용자를 반환
-            return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
+        // 사용자 서비스 호출 생성
+        UserResponseDto userResponseDto = authService.register(requestDto);
+        // 성공적 생성 -> 201 상태 코드로 생성된 사용자를 반환
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
 
-        } catch (CustomException e){
-            throw new CustomException(ErrorCode.METHOD_NOT_ALLOWED);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
     }
 
 

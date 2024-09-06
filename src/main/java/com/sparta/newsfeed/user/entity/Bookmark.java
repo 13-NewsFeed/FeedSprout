@@ -24,4 +24,9 @@ public class Bookmark {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    public Bookmark(User user, Post post) {
+        this.user = user;
+        this.post = post;
+    }
+
 }

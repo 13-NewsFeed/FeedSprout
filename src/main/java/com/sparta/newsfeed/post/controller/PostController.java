@@ -5,6 +5,7 @@ import com.sparta.newsfeed.auth.dto.AuthUser;
 import com.sparta.newsfeed.post.dto.PostRequestDto;
 import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.service.PostService;
+import com.sparta.newsfeed.user.dto.BookmarkResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,13 @@ public class PostController {
     public ResponseEntity<PostResponseDto> getPost(@PathVariable Long postId) {
         PostResponseDto response = postService.getpost(postId);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/posts/{postId}")
+    public ResponseEntity<?> createBookmark(AuthUser authUser, @PathVariable Long postId) {
+
+        BookmarkResponseDto responseDto = postService.createBookmark(authUser.getId(), postId);
+        return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/posts/editedDate")       // 게시글 조회 (수정일자 내림차순)

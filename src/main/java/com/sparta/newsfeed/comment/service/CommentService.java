@@ -6,7 +6,6 @@ import com.sparta.newsfeed.comment.entity.Comment;
 import com.sparta.newsfeed.comment.repository.CommentRepository;
 import com.sparta.newsfeed.config.exception.CustomException;
 import com.sparta.newsfeed.config.exception.ErrorCode;
-import com.sparta.newsfeed.post.dto.PostResponseDto;
 import com.sparta.newsfeed.post.entity.Post;
 import com.sparta.newsfeed.post.repository.PostRepository;
 import com.sparta.newsfeed.user.entity.User;
@@ -42,12 +41,14 @@ public class CommentService {
                 () -> new CustomException(ErrorCode.NOT_FOUND)
         );
 
+
         Comment newComment = new Comment(
                 commentSaveRequestDto.getContents(),
                 post,
                 user,
                 null,
-                null
+                null,
+                0L
         );
         Comment savedComment = commentRepository.save(newComment);
 
@@ -70,12 +71,17 @@ public class CommentService {
 
         User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (3 < parent.getDepth()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
         Comment newComment = new Comment(
                 commentSaveRequestDto.getContents(),
                 post,
                 user,
                 parent,
-                null
+                null,
+                parent.getDepth()+1L
         );
 
         Comment savedComment = commentRepository.save(newComment);
@@ -104,12 +110,22 @@ public class CommentService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new RuntimeException("Post not found")
         );
+
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Comment> pages = commentRepository.findByPostId(postId, pageable);
-        return pages
-                .stream()
-                .map(CommentGetAllResponseDto::new)
-                .toList();
+
+
+        Page<Comment> comments = commentRepository.findByPostId(postId, pageable);
+
+        return comments.getContent().stream().map(
+                comment -> new CommentGetAllResponseDto(
+                comment.getId(),
+                comment.getContents(),
+                comment.getPost().getId(),
+                comment.getUser().getId(),
+                comment.getCreatedAt(),
+                comment.getModifiedAt()
+        )).toList();
+
     }
 
     // 특정 댓글 내용 수정

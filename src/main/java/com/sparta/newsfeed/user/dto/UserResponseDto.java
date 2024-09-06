@@ -12,6 +12,7 @@ public class UserResponseDto {
     private String password;
     private String email;
     private String username;
+    private String profileImageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -23,6 +24,9 @@ public class UserResponseDto {
         this.username = user.getUsername();
         this.createdAt = user.getCreatedAt();
         this.modifiedAt = user.getModifiedAt();
+        if (user.getProfileImage() != null) {
+            this.profileImageUrl = user.getProfileImage().getImageUrl();
+        }
 
     }
 }
