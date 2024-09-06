@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -107,18 +108,15 @@ public class PostService {
 
     // 팔로우 전체 게시글 조회
     public List<PostResponseDto> getPostsByFollowedUsers(AuthUser authUser, int pageNo, int pageSize) {
-        // 팔로우 목록 가져오기
-        List<Long> followedUserIds = followRepository.findFolloweeIdsByFollowerId(authUser.getId());
-        if (followedUserIds.isEmpty()) {
-            throw new CustomException(ErrorCode.NOT_FOUND);
-        }
-        // 페이지 요청 설정
-        PageRequest pageRequest = PageRequest.of(pageNo, pageSize);
 
-        // 팔로우한 사용자들의 게시물 가져오기
-        Page<Post> postPage = postRepository.findByUserIdIn(followedUserIds, pageRequest);
+        // followerId로 팔로우한 유저 리스트를 가져옴
+        List<User> followedUsers = followRepository.findFollowedUsersByFollowerId(authUser.getId());
 
-        // 게시물을 DTO로 변환
+        // 팔로우한 유저들의 게시물을 페이징 처리하여 가져옴
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        List<Post> postPage = postRepository.findPostsByUsers(followedUsers, pageable);
+
+        // 게시물 리스트를 PostResponseDto로 변환
         return postPage.stream()
                 .map(PostResponseDto::new)
                 .toList();
